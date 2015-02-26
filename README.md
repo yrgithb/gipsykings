@@ -2,8 +2,16 @@ Gipsy Combat
 ============
 
 Two-player versus game for PC. Core gameplay: one boulder is available, which takes 0.7 seconds to pick up. After it is picked up, the player can throw it, killing the opposing player upon impact.
-Once the boulder has been picked up, the player not wielding the boulder  can pick up a stone. The stone is thrown at the player wielding the boulder, interrupting any  charging he is doing and causing him to drop the boulder.
+Once the boulder has been picked up, the player not wielding the boulder  can pick up a pebble. It is is thrown at the player wielding the boulder fast, interrupting any throw charging he is doing and causing him to drop the boulder.
 Physics big part of gameplay, defining the feeling of picking up and throwing the boulder, also impact.
+
+Core gameplay influencers:
+
+- boulder pick-up and charge timers
+- boulder physics
+- pebble counter-play
+- player mobility (i.e. via double jump or roll/air roll)
+- level design
 
 Roadmap:
 ========
@@ -11,6 +19,8 @@ Roadmap:
 PreAlpha (2 weeks from project start)
 
 - Simple rectangular arena
+- x and y axis movement
+- jumping
 - One player
 - Boulder, picking up and throwing the boulder
 - basic ui
@@ -19,10 +29,11 @@ PreAlpha (2 weeks from project start)
 Alpha (4 weeks from project start)
 
 - two players
+- double jump or roll mechanic
 - pebble implementation
-- placeholder art
+- placeholder art & improved ui (health bars, etc(
 - basic impact
-- death
+- death & respawn
 
 Beta 
 
