@@ -3,30 +3,45 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+	//
+	// movement related variables
+	//
+
+	// jump
+	private Transform groundCheck;
+	private bool grounded = false;
+	private bool jumping = false;
 	public float maxSpeed = 10.0f;
 	public float jumpForce = 1000.0f;
 	public LayerMask groundMask;
 
-	private bool facingRight = true; // required for sprite flipping on direction change
-	private Transform groundCheck;
-	private float groundRadius = 0.2f;
-	private bool grounded = false;
-	private bool jumping = false;
+	// movement direction
+	private bool facingRight = true;
+	enum Direction
+	{
+		DirectionNone,
+		DirectionLeft,
+		DirectionRight,
+	};
 
 	// Use this for initialization
 	void Start ()
 	{
-		groundCheck = transform.Find("GroundCheck");
+
+		groundCheck = transform.Find ("GroundCheck");
+	
 	}
 
 	// Update is called once per frame
 	void Update ()
 	{
 
-		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundMask);
+		// check ground collision
+		//grounded = Physics2D.OverlapCircle (groundCheck.position, groundRadius, groundMask);
+		grounded = Physics2D.Linecast(groundCheck.position, new Vector2(0.0f, -0.5f));
 
-		// jump
-		if (Input.GetButtonDown("Jump") == true && grounded == true) {
+		// jump flag flip
+		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
 			jumping = true;
 		}
 
@@ -34,18 +49,56 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		// horizontal movement
-		float move = Input.GetAxis ("Horizontal");
-		rigidbody2D.velocity = new Vector2 (move * maxSpeed, rigidbody2D.velocity.y);
 
-		if ((move > 0 && facingRight == false) || (move < 0 && facingRight == true)) {
-			Flip ();
+		Direction direction = CalculateDirection ();
+		FlipIfNeeded (direction);	
+		PerformMovement (direction);
+
+	}
+
+	void PerformMovement (Direction direction)
+	{
+
+		// add movement
+		int directionMultiplier = 0;
+		if (direction == Direction.DirectionLeft) {
+			directionMultiplier = -1;
+		} else if (direction == Direction.DirectionRight) {
+			directionMultiplier = 1;
 		}
+		rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
 
 		if (jumping == true) {
 			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
 			jumping = false;
 		}
+	}
+
+	void FlipIfNeeded (Direction direction)
+	{
+	
+		// flip if needed
+		if ((direction == Direction.DirectionRight && facingRight == false) || (direction == Direction.DirectionLeft && facingRight == true)) {
+			Flip ();
+		}	
+
+	}
+
+	Direction CalculateDirection ()
+	{
+
+		Direction result = Direction.DirectionNone;
+
+		float horizontalAxis = Input.GetAxis ("Horizontal");
+
+		if (horizontalAxis > 0.0f) {
+			result = Direction.DirectionRight;
+		} else if (horizontalAxis < 0.0f) {
+			result = Direction.DirectionLeft;
+		}
+
+		return result;
+
 	}
 
 	void Flip ()
