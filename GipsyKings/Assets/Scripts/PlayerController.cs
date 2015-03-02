@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
 	//
 	// movement related variables
 	//
-
 	// jump
 	private bool grounded = false;
 	private bool hitWall = false;
@@ -30,9 +29,16 @@ public class PlayerController : MonoBehaviour
 		DirectionRight,
 	};
 
+	//
+	// other actions 
+	//
+	public bool isCharging;
+
 	// Use this for initialization
 	void Start ()
 	{
+
+		isCharging = false;
 
 	}
 
@@ -43,6 +49,14 @@ public class PlayerController : MonoBehaviour
 		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
 			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
 			jumping = false;
+		}
+
+		if (Input.GetButtonDown ("Fire1") == true) {
+			isCharging = true;
+		} 
+
+		if (Input.GetButtonUp ("Fire1") == true) {
+			isCharging = false;
 		}
 
 	}
