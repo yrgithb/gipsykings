@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MiscControls : MonoBehaviour
+public class GeneralControlsController : MonoBehaviour
 {
 
 	// Use this for initialization

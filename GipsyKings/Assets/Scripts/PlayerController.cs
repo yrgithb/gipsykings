@@ -4,12 +4,18 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
 	//
+	// collider elements
+	//
+	public CircleCollider2D groundCollider;
+	public BoxCollider2D bodyCollider;
+
+	//
 	// movement related variables
 	//
 
 	// jump
-	private Transform groundCheck;
 	private bool grounded = false;
+	private bool hitWall = false;
 	private bool jumping = false;
 	public float maxSpeed = 10.0f;
 	public float jumpForce = 1000.0f;
@@ -28,23 +34,6 @@ public class PlayerController : MonoBehaviour
 	void Start ()
 	{
 
-		groundCheck = transform.Find ("GroundCheck");
-	
-	}
-
-	// Update is called once per frame
-	void Update ()
-	{
-
-		// check ground collision
-		//grounded = Physics2D.OverlapCircle (groundCheck.position, groundRadius, groundMask);
-		grounded = Physics2D.Linecast(groundCheck.position, new Vector2(0.0f, -0.5f));
-
-		// jump flag flip
-		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
-			jumping = true;
-		}
-
 	}
 
 	void FixedUpdate ()
@@ -54,6 +43,34 @@ public class PlayerController : MonoBehaviour
 		FlipIfNeeded (direction);	
 		PerformMovement (direction);
 
+	}
+	
+	void OnCollisionExit2D(Collision2D collision)
+	{
+		foreach (ContactPoint2D contact in collision.contacts)
+		{
+			if (contact.otherCollider == groundCollider) {
+				if (jumping == false) {
+					grounded = false;
+				}
+			} else if (contact.otherCollider == bodyCollider) {
+				hitWall = false;
+			}
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		foreach (ContactPoint2D contact in collision.contacts)
+		{
+			if (contact.otherCollider == groundCollider) {
+				if (jumping == false) {
+					grounded = true;
+				}
+			} else if (contact.otherCollider == bodyCollider) {
+				hitWall = true;
+			}
+		}
 	}
 
 	void PerformMovement (Direction direction)
@@ -66,9 +83,13 @@ public class PlayerController : MonoBehaviour
 		} else if (direction == Direction.DirectionRight) {
 			directionMultiplier = 1;
 		}
-		rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
 
-		if (jumping == true) {
+		if (hitWall == false) {
+			rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
+		}
+
+		// jump flag flip
+		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
 			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
 			jumping = false;
 		}
@@ -76,10 +97,13 @@ public class PlayerController : MonoBehaviour
 
 	void FlipIfNeeded (Direction direction)
 	{
-	
+
 		// flip if needed
 		if ((direction == Direction.DirectionRight && facingRight == false) || (direction == Direction.DirectionLeft && facingRight == true)) {
 			Flip ();
+
+			// if direction was changed then wall flag should be reset
+			ResetHitWallFlag ();
 		}	
 
 	}
@@ -107,5 +131,12 @@ public class PlayerController : MonoBehaviour
 		Vector3 scale = transform.localScale;
 		scale.x *= -1;
 		transform.localScale = scale;
+	}
+
+	void ResetHitWallFlag ()
+	{
+
+		hitWall = false;
+
 	}
 }
