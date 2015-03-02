@@ -36,6 +36,17 @@ public class PlayerController : MonoBehaviour
 
 	}
 
+	void Update () 
+	{
+
+		// jump flag flip irrespective of fixed update time
+		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
+			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
+			jumping = false;
+		}
+
+	}
+
 	void FixedUpdate ()
 	{
 
@@ -88,11 +99,6 @@ public class PlayerController : MonoBehaviour
 			rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
 		}
 
-		// jump flag flip
-		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
-			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
-			jumping = false;
-		}
 	}
 
 	void FlipIfNeeded (Direction direction)
