@@ -30,8 +30,7 @@ public class PlayerController : MonoBehaviour
 	enum AnimationState
 	{
 		AnimationStateToIdle = 0,
-		AnimationStateToJump = 1,
-		AnimationStateToWalk = 2,
+		AnimationStateToWalk = 1,
 	}
 
 	//
@@ -88,7 +87,7 @@ public class PlayerController : MonoBehaviour
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				grounded = false;
-				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToJump);
+				animator.SetBool ("Grounded", grounded);
 			} else if (contact.otherCollider == bodyCollider) {
 				hitWall = false;
 			}
@@ -100,12 +99,10 @@ public class PlayerController : MonoBehaviour
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				grounded = true;
-				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
+				animator.SetBool ("Grounded", grounded);
 			} else if (contact.otherCollider == bodyCollider) {
-				if (grounded == true) {
-					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
-				}
 				hitWall = true;
+				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 		}
 	}
@@ -122,13 +119,12 @@ public class PlayerController : MonoBehaviour
 		}
 
 		if (hitWall == false) {
-			if (grounded == true) {
-				if (directionMultiplier != 0) {
-					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToWalk);
-				} else {
-					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
-				}
+			if (directionMultiplier != 0) {
+				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToWalk);
+			} else {
+				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
+
 			rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
 		}
 
