@@ -7,7 +7,7 @@ public class HealthBarScript : MonoBehaviour
 	public PlayerController parentGameObject;
 	public Scrollbar scrollBar;
 	public Vector2 offset;
-	public float chargeTime;
+	private float chargeTime;
 	public bool isHealthBar;
 	public bool isChargeMeter;
 
@@ -22,11 +22,16 @@ public class HealthBarScript : MonoBehaviour
 		
 		goingUp = true;
 		directionMultiplier = 1;
+
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
+		// TODO: Move to Start () after determining value, locating this here is needed only for debugging value changes 
+		chargeTime = parentGameObject.chargeAmount;
+		
+
 		// anochor to parent game object
 		Vector2 framePosition = Camera.main.WorldToScreenPoint (parentGameObject.transform.position);
 		framePosition.x += offset.x;
@@ -47,7 +52,8 @@ public class HealthBarScript : MonoBehaviour
 			if (parentGameObject.isCharging == true) {
 				charge += Time.deltaTime;
 
-				if (charge == chargeTime) {
+				if (charge >= chargeTime) {
+					parentGameObject.FinishedChargingAction();
 					charge = 0.0f;
 				}
 			} else {

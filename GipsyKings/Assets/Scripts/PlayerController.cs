@@ -10,6 +10,13 @@ public class PlayerController : MonoBehaviour
 	public BoxCollider2D bodyCollider;
 
 	//
+	// Accessible boulder
+	//
+	// Will be set from the boulder trigger script!
+	[HideInInspector]
+	public BoulderTriggerScript boulderObject;
+
+	//
 	// movement related variables
 	//
 	// jump
@@ -39,7 +46,8 @@ public class PlayerController : MonoBehaviour
 	// other actions 
 	//
 	public bool isCharging;
-
+	public float chargeAmount;
+	
 	private Animator animator;
 
 	// Use this for initialization
@@ -60,20 +68,24 @@ public class PlayerController : MonoBehaviour
 	void Update ()
 	{
 
-		// jump flag flip irrespective of fixed update time
-		if (Input.GetButtonDown ("Jump") == true && (grounded == true || doubleJump == false)) {
-			if (grounded == false && doubleJump == false) {
-				doubleJump = true;
+		if (isCharging == false) {
+			// jump flag flip irrespective of fixed update time
+			if (Input.GetButtonDown ("Jump") == true && (grounded == true || doubleJump == false)) {
+				if (grounded == false && doubleJump == false) {
+					doubleJump = true;
 
-				// reset y velocity so second jump is as powerful as first one
-				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0.0f);
+					// reset y velocity so second jump is as powerful as first one
+					rigidbody2D.velocity = new Vector2 (rigidbody2D.velocity.x, 0.0f);
+				}
+
+				rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
 			}
-
-			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
 		}
 
 		if (Input.GetButtonDown ("Fire1") == true) {
-			isCharging = true;
+			if (grounded == true) { 
+				isCharging = true;
+			}
 		} 
 
 		if (Input.GetButtonUp ("Fire1") == true) {
@@ -128,6 +140,10 @@ public class PlayerController : MonoBehaviour
 			directionMultiplier = 1;
 		}
 
+		if (isCharging == true) {
+			directionMultiplier = 0;
+		}
+
 		if (hitWall == false) {
 			if (directionMultiplier != 0) {
 				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToWalk);
@@ -135,7 +151,9 @@ public class PlayerController : MonoBehaviour
 				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 
-			rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
+			if (isCharging == false) {
+				rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
+			}
 		}
 
 	}
@@ -182,6 +200,17 @@ public class PlayerController : MonoBehaviour
 	{
 
 		hitWall = false;
+
+	}
+
+	public void FinishedChargingAction ()
+	{
+
+		isCharging = false;
+		print ("Charged up!");
+		if (boulderObject.canBePickedUp == true) {
+			print ("Boulder can be collected!");
+		}
 
 	}
 }
