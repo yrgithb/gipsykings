@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 	// movement related variables
 	//
 	// jump
-	private bool grounded = false;
+	public bool grounded = false;
 	private bool hitWall = false;
 	private bool jumping = false;
 	public float maxSpeed = 10.0f;
@@ -28,21 +28,36 @@ public class PlayerController : MonoBehaviour
 		DirectionLeft,
 		DirectionRight,
 	};
+	enum AnimationState
+	{
+		AnimationStateToIdle = 0,
+		AnimationStateToJump = 1,
+		AnimationStateToWalk = 2,
+	}
 
 	//
 	// other actions 
 	//
 	public bool isCharging;
 
+	private Animator animator;
+
 	// Use this for initialization
 	void Start ()
 	{
 
 		isCharging = false;
+		animator = GetComponent<Animator> ();
+		if (animator == null) {
+			print ("Failed fetching animator object for player.");
+		}
 
+		// default to idle state
+		animator.SetInteger("Player1AnimationState", 0);
+	
 	}
 
-	void Update () 
+	void Update ()
 	{
 
 		// jump flag flip irrespective of fixed update time
@@ -70,13 +85,14 @@ public class PlayerController : MonoBehaviour
 
 	}
 	
-	void OnCollisionExit2D(Collision2D collision)
+	void OnCollisionExit2D (Collision2D collision)
 	{
-		foreach (ContactPoint2D contact in collision.contacts)
-		{
+		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				if (jumping == false) {
 					grounded = false;
+
+					animator.SetInteger("Player1AnimationState", (int)AnimationState.AnimationStateToJump);
 				}
 			} else if (contact.otherCollider == bodyCollider) {
 				hitWall = false;
@@ -84,15 +100,18 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D collision)
+	void OnCollisionEnter2D (Collision2D collision)
 	{
-		foreach (ContactPoint2D contact in collision.contacts)
-		{
+		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				if (jumping == false) {
 					grounded = true;
+					animator.SetInteger("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 				}
 			} else if (contact.otherCollider == bodyCollider) {
+				if (grounded == true) {
+					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
+				}
 				hitWall = true;
 			}
 		}
@@ -110,6 +129,13 @@ public class PlayerController : MonoBehaviour
 		}
 
 		if (hitWall == false) {
+			if (grounded == true) {
+				if (directionMultiplier != 0) {
+					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToWalk);
+				} else {
+					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
+				}
+			}
 			rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
 		}
 
