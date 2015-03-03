@@ -13,9 +13,8 @@ public class PlayerController : MonoBehaviour
 	// movement related variables
 	//
 	// jump
-	public bool grounded = false;
+	private bool grounded = false;
 	private bool hitWall = false;
-	private bool jumping = false;
 	public float maxSpeed = 10.0f;
 	public float jumpForce = 1000.0f;
 	public LayerMask groundMask;
@@ -53,7 +52,7 @@ public class PlayerController : MonoBehaviour
 		}
 
 		// default to idle state
-		animator.SetInteger("Player1AnimationState", 0);
+		animator.SetInteger ("Player1AnimationState", 0);
 	
 	}
 
@@ -63,7 +62,6 @@ public class PlayerController : MonoBehaviour
 		// jump flag flip irrespective of fixed update time
 		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
 			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
-			jumping = false;
 		}
 
 		if (Input.GetButtonDown ("Fire1") == true) {
@@ -89,11 +87,8 @@ public class PlayerController : MonoBehaviour
 	{
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
-				if (jumping == false) {
-					grounded = false;
-
-					animator.SetInteger("Player1AnimationState", (int)AnimationState.AnimationStateToJump);
-				}
+				grounded = false;
+				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToJump);
 			} else if (contact.otherCollider == bodyCollider) {
 				hitWall = false;
 			}
@@ -104,10 +99,8 @@ public class PlayerController : MonoBehaviour
 	{
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
-				if (jumping == false) {
-					grounded = true;
-					animator.SetInteger("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
-				}
+				grounded = true;
+				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 			} else if (contact.otherCollider == bodyCollider) {
 				if (grounded == true) {
 					animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
