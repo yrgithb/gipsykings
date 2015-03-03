@@ -27,14 +27,15 @@ public class BoulderObjectScript : MonoBehaviour
 	void Update ()
 	{
 
-		// trigger position should match boulder image object
-		//boulderTriggerObject.transform.position = boulderImageObject.transform.position;
-
 		canBePickedUp = false;
 
-		if (boulderTriggerObject.triggeringCollider != null) {
-			if (boulderTriggerObject.triggeringCollider.gameObject == playerController.gameObject) {
-				canBePickedUp = true;
+		if (boulderTriggerObject.triggeringColliders.Count > 0) {
+			foreach (DictionaryEntry entry in boulderTriggerObject.triggeringColliders) {
+				// if collider hashtable contains player object, mark as pickable
+				Collider2D collider = (Collider2D)entry.Key;
+				if (collider.gameObject == playerController.gameObject) {
+					canBePickedUp = true;
+				}
 			}
 		}
 	

@@ -3,14 +3,14 @@ using System.Collections;
 
 public class BoulderTriggerScript : MonoBehaviour
 {
-
-	public Collider2D triggeringCollider; 
+	public Hashtable triggeringColliders;
 
 	// Use this for initialization
 	void Start ()
 	{
 
-		triggeringCollider = null;
+		triggeringColliders = new Hashtable ();
+		triggeringColliders.Clear ();
 	
 	}
 	
@@ -23,14 +23,14 @@ public class BoulderTriggerScript : MonoBehaviour
 	void OnTriggerEnter2D (Collider2D other)
 	{
 
-		triggeringCollider = other;
+		triggeringColliders[other] = other.gameObject;
 
 	}
 
 	void OnTriggerExit2D (Collider2D other)
 	{
-
-		triggeringCollider = null;
+		
+		triggeringColliders.Remove(other);
 
 	}
 }

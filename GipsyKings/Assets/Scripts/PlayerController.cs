@@ -148,7 +148,9 @@ public class PlayerController : MonoBehaviour
 		}
 
 		if (isCharging == true) {
+			// stop any movement if charging
 			directionMultiplier = 0;
+			rigidbody2D.velocity = new Vector2(0.0f, rigidbody2D.velocity.y); 
 		}
 
 		if (hitWall == false) {
@@ -231,7 +233,7 @@ public class PlayerController : MonoBehaviour
 
 		if (boulderObject != null) {
 			if (boulderObject.isCarried == true) {
-				boulderObject.transform.position = new Vector2 (this.transform.position.x, this.transform.position.y + 1.2f);
+				boulderObject.transform.position = new Vector2 (this.transform.position.x, this.transform.position.y + 1.0f);
 			}
 		}
 
