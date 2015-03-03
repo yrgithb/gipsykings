@@ -46,7 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\BoulderScript.cs" />
+     <Compile Include="Assets\Scripts\BoulderObjectScript.cs" />
      <Compile Include="Assets\Scripts\BoulderTriggerScript.cs" />
      <Compile Include="Assets\Scripts\GeneralControlsController.cs" />
      <Compile Include="Assets\Scripts\HealthBarScript.cs" />

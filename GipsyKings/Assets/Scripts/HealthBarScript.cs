@@ -30,7 +30,6 @@ public class HealthBarScript : MonoBehaviour
 	{
 		// TODO: Move to Start () after determining value, locating this here is needed only for debugging value changes 
 		chargeTime = parentGameObject.chargeAmount;
-		
 
 		// anochor to parent game object
 		Vector2 framePosition = Camera.main.WorldToScreenPoint (parentGameObject.transform.position);

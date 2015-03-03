@@ -14,7 +14,8 @@ public class PlayerController : MonoBehaviour
 	//
 	// Will be set from the boulder trigger script!
 	[HideInInspector]
-	public BoulderTriggerScript boulderObject;
+	public BoulderObjectScript
+		boulderObject;
 
 	//
 	// movement related variables
@@ -92,6 +93,8 @@ public class PlayerController : MonoBehaviour
 			isCharging = false;
 		}
 
+		UpdateBoulderPosition ();
+
 	}
 
 	void FixedUpdate ()
@@ -105,6 +108,7 @@ public class PlayerController : MonoBehaviour
 	
 	void OnCollisionExit2D (Collision2D collision)
 	{
+
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				grounded = false;
@@ -113,10 +117,12 @@ public class PlayerController : MonoBehaviour
 				hitWall = false;
 			}
 		}
+
 	}
 
 	void OnCollisionEnter2D (Collision2D collision)
 	{
+
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				grounded = true;
@@ -127,6 +133,7 @@ public class PlayerController : MonoBehaviour
 				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 		}
+
 	}
 
 	void PerformMovement (Direction direction)
@@ -190,10 +197,12 @@ public class PlayerController : MonoBehaviour
 
 	void Flip ()
 	{
+
 		facingRight = !facingRight;
 		Vector3 scale = transform.localScale;
 		scale.x *= -1;
 		transform.localScale = scale;
+	
 	}
 
 	void ResetHitWallFlag ()
@@ -207,9 +216,51 @@ public class PlayerController : MonoBehaviour
 	{
 
 		isCharging = false;
-		print ("Charged up!");
-		if (boulderObject.canBePickedUp == true) {
-			print ("Boulder can be collected!");
+		if (boulderObject != null) {
+			if (boulderObject.isCarried == false) {
+				PickupBoulder ();
+			} else {
+				ThrowBoulder ();
+			}
+		}
+
+	}
+
+	void UpdateBoulderPosition ()
+	{
+
+		if (boulderObject != null) {
+			if (boulderObject.isCarried == true) {
+				boulderObject.transform.position = new Vector2 (this.transform.position.x, this.transform.position.y + 1.2f);
+			}
+		}
+
+	}
+
+	void PickupBoulder ()
+	{
+
+		if (boulderObject != null) {
+			if (boulderObject.canBePickedUp == true && boulderObject.isCarried == false) {
+				// disable physics
+				boulderObject.rigidbody2D.isKinematic = true;
+
+				boulderObject.isCarried = true;
+			}
+		}
+
+	}
+
+	void ThrowBoulder ()
+	{
+
+		if (boulderObject != null) {
+			if (boulderObject.isCarried == true) {
+				// enable physics
+				boulderObject.rigidbody2D.isKinematic = false;
+
+				boulderObject.isCarried = false;
+			}
 		}
 
 	}
