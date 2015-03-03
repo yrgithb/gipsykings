@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+
 	//
 	// collider elements
 	//
@@ -26,7 +27,6 @@ public class PlayerController : MonoBehaviour
 	public float jumpForce = 1000.0f;
 
 	private bool hitWall = false;
-
 	public float maxSpeed = 10.0f;
 
 	// movement direction
@@ -50,6 +50,9 @@ public class PlayerController : MonoBehaviour
 	public float chargeAmount;
 	
 	private Animator animator;
+	private AudioSource audioSource;
+	public AudioClip[] walkingSounds;
+	public AudioClip jumpingSound;
 
 	// Use this for initialization
 	void Start ()
@@ -63,7 +66,12 @@ public class PlayerController : MonoBehaviour
 
 		// default to idle state
 		animator.SetInteger ("Player1AnimationState", 0);
-	
+
+		audioSource = GetComponent<AudioSource> ();
+		if (audioSource == null) {
+			print ("Failed loading audio source for player.");
+		}
+
 	}
 
 	void Update ()
@@ -80,6 +88,7 @@ public class PlayerController : MonoBehaviour
 				}
 
 				rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
+				PlayJumpSound ();
 			}
 		}
 
@@ -150,7 +159,7 @@ public class PlayerController : MonoBehaviour
 		if (isCharging == true) {
 			// stop any movement if charging
 			directionMultiplier = 0;
-			rigidbody2D.velocity = new Vector2(0.0f, rigidbody2D.velocity.y); 
+			rigidbody2D.velocity = new Vector2 (0.0f, rigidbody2D.velocity.y); 
 		}
 
 		if (hitWall == false) {
@@ -162,9 +171,33 @@ public class PlayerController : MonoBehaviour
 
 			if (isCharging == false) {
 				rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
+
+				if (directionMultiplier != 0 && grounded == true) {
+					PlayWalkingSound ();
+				}
 			}
 		}
 
+	}
+
+	void PlayWalkingSound ()
+	{
+
+		if (audioSource.isPlaying == false) {
+			int max = walkingSounds.Length;
+			int randomIndex = Random.Range (0, max);
+			audioSource.clip = walkingSounds [randomIndex];
+			audioSource.PlayDelayed (0.1f);
+		}
+
+	}
+
+	void PlayJumpSound ()
+	{
+
+		audioSource.clip = jumpingSound;
+		audioSource.Play ();
+	
 	}
 
 	void FlipIfNeeded (Direction direction)
