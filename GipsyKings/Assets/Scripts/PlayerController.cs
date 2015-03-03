@@ -14,10 +14,12 @@ public class PlayerController : MonoBehaviour
 	//
 	// jump
 	private bool grounded = false;
-	private bool hitWall = false;
-	public float maxSpeed = 10.0f;
+	private bool doubleJump = false;
 	public float jumpForce = 1000.0f;
-	public LayerMask groundMask;
+
+	private bool hitWall = false;
+
+	public float maxSpeed = 10.0f;
 
 	// movement direction
 	private bool facingRight = true;
@@ -59,7 +61,14 @@ public class PlayerController : MonoBehaviour
 	{
 
 		// jump flag flip irrespective of fixed update time
-		if (Input.GetButtonDown ("Jump") == true && grounded == true) {
+		if (Input.GetButtonDown ("Jump") == true && (grounded == true || doubleJump == false)) {
+			if (grounded == false && doubleJump == false) {
+				doubleJump = true;
+
+				// reset y velocity so second jump is as powerful as first one
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0.0f);
+			}
+
 			rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
 		}
 
@@ -99,6 +108,7 @@ public class PlayerController : MonoBehaviour
 		foreach (ContactPoint2D contact in collision.contacts) {
 			if (contact.otherCollider == groundCollider) {
 				grounded = true;
+				doubleJump = false;
 				animator.SetBool ("Grounded", grounded);
 			} else if (contact.otherCollider == bodyCollider) {
 				hitWall = true;
