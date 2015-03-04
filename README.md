@@ -28,28 +28,28 @@ PreAlpha (2 weeks from project start) - Completed on 04.03.2015
 
 Alpha (4 weeks from project start)
 
-- two players
-- double jump or roll mechanic
-- pebble implementation
-- placeholder art & improved ui (health bars, etc)
-- basic impact
-- death & respawn
+- [ ] two players
+- [ ] double jump or roll mechanic
+- [ ] pebble implementation
+- [ ] placeholder art & improved ui (health bars, etc)
+- [ ] basic impact
+- [ ] death & respawn
 
 Beta 
 
-- advanced throwing (trajectories, force, charge finetuning)
-- advanced impact (ragdoll physics, dismembering)
-- better art
-- biomes
-- basic level design (multi level arena with platforms etc)
+- [ ] advanced throwing (trajectories, force, charge finetuning)
+- [ ] advanced impact (ragdoll physics, dismembering)
+- [ ] better art
+- [ ] biomes
+- [ ] basic level design (multi level arena with platforms etc)
 
 Final
 
-- rocksize variations with included physics implication
-- music and sounds
-- final art
-- final level design
-- final biome count, generation
+- [ ] rocksize variations with included physics implication
+- [ ] music and sounds
+- [ ] final art
+- [ ] final level design
+- [ ] final biome count, generation
 
 Review
 
