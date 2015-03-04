@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
 	private AudioSource audioSource;
 	public AudioClip[] walkingSounds;
 	public AudioClip jumpingSound;
-	public AudioClip pickupSound;
+	public AudioClip[] pickupSounds;
 
 	// Use this for initialization
 	void Start ()
@@ -210,7 +210,9 @@ public class PlayerController : MonoBehaviour
 	void PlayPickupSound ()
 	{
 
-		PlaySoundClip(pickupSound);
+		int max = pickupSounds.Length;
+		int randomIndex = Random.Range (0, max);
+		PlaySoundClip(pickupSounds [randomIndex]);
 
 	}
 
