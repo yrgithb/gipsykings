@@ -15,8 +15,7 @@ public class PlayerController : MonoBehaviour
 	//
 	// Will be set from the boulder trigger script!
 	[HideInInspector]
-	public BoulderObjectScript
-		boulderObject;
+	public BoulderObjectScript boulderObject;
 
 	//
 	// movement related variables
@@ -47,7 +46,8 @@ public class PlayerController : MonoBehaviour
 	// other actions 
 	//
 	public bool isCharging;
-	public float chargeAmount;
+	public float boulderChargeAmount;
+	public float boulderThrowForce = 2000.0f;
 	
 	private Animator animator;
 	private AudioSource audioSource;
@@ -255,9 +255,16 @@ public class PlayerController : MonoBehaviour
 			if (boulderObject.isCarried == false) {
 				PickupBoulder ();
 			} else {
-				ThrowBoulder ();
+				ThrowBoulder (1.0f);
 			}
 		}
+
+	}
+	
+	public void StoppedChargingAction (float percent)
+	{
+		
+		ThrowBoulder (percent);
 
 	}
 
@@ -286,7 +293,7 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	void ThrowBoulder ()
+	void ThrowBoulder (float percent)
 	{
 
 		if (boulderObject != null) {
@@ -295,6 +302,15 @@ public class PlayerController : MonoBehaviour
 				boulderObject.rigidbody2D.isKinematic = false;
 
 				boulderObject.isCarried = false;
+
+				int directionMultiplier = 0;
+				if (facingRight == false) {
+					directionMultiplier = -1;
+				} else {
+					directionMultiplier = 1;
+				}
+				float force = percent * boulderThrowForce;
+				boulderObject.rigidbody2D.AddForce(new Vector2(directionMultiplier * force, 0.25f * force)); // to the side & a bit up
 			}
 		}
 

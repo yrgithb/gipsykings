@@ -11,17 +11,15 @@ public class HealthBarScript : MonoBehaviour
 	public bool isHealthBar;
 	public bool isChargeMeter;
 
-	// temporary variable for animation
-	private int directionMultiplier;
-	private bool goingUp;
 	private float charge;
 
 	// Use this for initialization
 	void Start ()
 	{
-		
-		goingUp = true;
-		directionMultiplier = 1;
+
+		if (isHealthBar == true) {
+			scrollBar.size = 1.0f;
+		}
 
 	}
 	
@@ -29,7 +27,7 @@ public class HealthBarScript : MonoBehaviour
 	void Update ()
 	{
 		// TODO: Move to Start () after determining value, locating this here is needed only for debugging value changes 
-		chargeTime = parentGameObject.chargeAmount;
+		chargeTime = parentGameObject.boulderChargeAmount;
 
 		// anochor to parent game object
 		Vector2 framePosition = Camera.main.WorldToScreenPoint (parentGameObject.transform.position);
@@ -39,23 +37,18 @@ public class HealthBarScript : MonoBehaviour
 		RectTransform rectTransform = (RectTransform)this.transform;
 		rectTransform.anchoredPosition = framePosition;
 
-		if (isHealthBar == true) {
-			// basic animation
-			if ((goingUp == true && scrollBar.size >= 1.0f) || (goingUp == false && scrollBar.size <= 0.0f)) {
-				goingUp = !goingUp;
-				directionMultiplier *= -1;
-			}
-
-			scrollBar.size += directionMultiplier * Time.deltaTime * 0.5f;
-		} else if (isChargeMeter == true) {
+		if (isChargeMeter == true) {
 			if (parentGameObject.isCharging == true) {
 				charge += Time.deltaTime;
 
 				if (charge >= chargeTime) {
-					parentGameObject.FinishedChargingAction();
+					parentGameObject.FinishedChargingAction ();
 					charge = 0.0f;
 				}
 			} else {
+				if (charge > 0.0f) {
+					parentGameObject.StoppedChargingAction (charge / chargeTime);
+				}
 				charge = 0.0f;
 			}
 			scrollBar.size = charge / chargeTime;
