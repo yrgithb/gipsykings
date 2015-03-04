@@ -8,6 +8,9 @@ public class BoulderObjectScript : MonoBehaviour
 	public bool canBePickedUp;
 	public bool isCarried;
 
+	private AudioSource audioSource;
+	public AudioClip[] throwingSounds;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -20,6 +23,11 @@ public class BoulderObjectScript : MonoBehaviour
 
 		// assign to player object
 		playerController.boulderObject = this;
+
+		audioSource = GetComponent<AudioSource> ();
+		if (audioSource == null) {
+			print ("Failed loading audio source for player.");
+		}
 	
 	}
 	
@@ -39,5 +47,15 @@ public class BoulderObjectScript : MonoBehaviour
 			}
 		}
 	
+	}
+
+	public void PlayThrowSound ()
+	{
+
+		int max = throwingSounds.Length;
+		int randomIndex = Random.Range (0, max);
+		audioSource.clip = throwingSounds [randomIndex];
+		audioSource.Play ();
+
 	}
 }

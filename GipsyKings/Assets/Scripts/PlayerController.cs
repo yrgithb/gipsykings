@@ -53,6 +53,7 @@ public class PlayerController : MonoBehaviour
 	private AudioSource audioSource;
 	public AudioClip[] walkingSounds;
 	public AudioClip jumpingSound;
+	public AudioClip pickupSound;
 
 	// Use this for initialization
 	void Start ()
@@ -180,23 +181,43 @@ public class PlayerController : MonoBehaviour
 
 	}
 
+	void PlaySoundClip (AudioClip clip, float delay)
+	{
+
+		audioSource.clip = clip;
+		audioSource.PlayDelayed (delay);
+
+	}
+
+	void PlaySoundClip (AudioClip clip)
+	{
+
+		PlaySoundClip(clip, 0.0f);
+
+	}
+
 	void PlayWalkingSound ()
 	{
 
 		if (audioSource.isPlaying == false) {
 			int max = walkingSounds.Length;
 			int randomIndex = Random.Range (0, max);
-			audioSource.clip = walkingSounds [randomIndex];
-			audioSource.PlayDelayed (0.1f);
+			PlaySoundClip(walkingSounds [randomIndex], 0.1f);
 		}
+
+	}
+
+	void PlayPickupSound ()
+	{
+
+		PlaySoundClip(pickupSound);
 
 	}
 
 	void PlayJumpSound ()
 	{
 
-		audioSource.clip = jumpingSound;
-		audioSource.Play ();
+		PlaySoundClip(jumpingSound);
 	
 	}
 
@@ -288,6 +309,8 @@ public class PlayerController : MonoBehaviour
 				boulderObject.rigidbody2D.isKinematic = true;
 
 				boulderObject.isCarried = true;
+
+				PlayPickupSound ();
 			}
 		}
 
@@ -311,6 +334,8 @@ public class PlayerController : MonoBehaviour
 				}
 				float force = percent * boulderThrowForce;
 				boulderObject.rigidbody2D.AddForce(new Vector2(directionMultiplier * force, 0.25f * force)); // to the side & a bit up
+
+				boulderObject.PlayThrowSound ();
 			}
 		}
 
