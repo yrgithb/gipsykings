@@ -16,22 +16,22 @@ Core gameplay influencers:
 Roadmap:
 ========
 
-PreAlpha (2 weeks from project start)
+PreAlpha (2 weeks from project start) - Completed on 04.03.2015
 
-- Simple rectangular arena
-- x and y axis movement
-- jumping
-- One player
-- Boulder, picking up and throwing the boulder
-- basic ui
-- programmer art
+- [x] simple rectangular arena
+- [x] x and y axis movement
+- [x] jumping
+- [x] pne player
+- [x] boulder, picking up and throwing the boulder
+- [x] basic UI
+- [x] programmer art
 
 Alpha (4 weeks from project start)
 
 - two players
 - double jump or roll mechanic
 - pebble implementation
-- placeholder art & improved ui (health bars, etc(
+- placeholder art & improved ui (health bars, etc)
 - basic impact
 - death & respawn
 
