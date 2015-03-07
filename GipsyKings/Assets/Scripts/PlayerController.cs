@@ -4,32 +4,26 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
 
-	//
-	// collider elements
-	//
+	public enum OwningPlayer
+	{
+		Player1,
+		Player2
+	}
+	public OwningPlayer player;
+
+	private GameObject potentialBoulder;
+	private GameObject heldBoulder; 
+
+	// movement
 	public CircleCollider2D groundCollider;
 	public BoxCollider2D bodyCollider;
 
-	//
-	// Accessible boulder
-	//
-	// Will be set from the boulder trigger script!
-	[HideInInspector]
-	public BoulderObjectScript
-		boulderObject;
-
-	//
-	// movement related variables
-	//
-	// jump
 	private bool grounded = false;
 	private bool doubleJump = false;
 	public float jumpForce = 1000.0f;
-
 	private bool hitWall = false;
 	public float maxSpeed = 10.0f;
 
-	// movement direction
 	private bool facingRight = true;
 	enum Direction
 	{
@@ -43,13 +37,11 @@ public class PlayerController : MonoBehaviour
 		AnimationStateToWalk = 1,
 	}
 
-	//
-	// other actions 
-	//
 	public bool isCharging;
 	public float boulderChargeAmount;
 	public float boulderThrowForce = 2000.0f;
-	
+
+	// video & audio
 	private Animator animator;
 	private AudioSource audioSource;
 	public AudioClip[] walkingSounds;
@@ -69,62 +61,71 @@ public class PlayerController : MonoBehaviour
 
 		audioSource = GetComponent<AudioSource> ();
 
+		potentialBoulder = null;
+		heldBoulder = null;
+
 	}
 
 	void Update ()
 	{
 
-		if (isCharging == false) {
-			// jump flag flip irrespective of fixed update time
-			if (Input.GetButtonDown ("P1Jump") == true && (grounded == true || doubleJump == false)) {
-				if (grounded == false && doubleJump == false) {
-					doubleJump = true;
-
-					// reset y velocity so second jump is as powerful as first one
-					GetComponent<Rigidbody2D>().velocity = new Vector2 (GetComponent<Rigidbody2D>().velocity.x, 0.0f);
-				}
-
-				GetComponent<Rigidbody2D>().AddForce (new Vector2 (0.0f, jumpForce));
-				PlayJumpSound ();
-			}
-		}
-
-		if (Input.GetButtonDown ("P1Action") == true) {
-			if (grounded == true) { 
-				isCharging = true;
-			}
-		} 
-
-		if (Input.GetButtonUp ("P1Action") == true) {
-			isCharging = false;
-		}
-
-		UpdateBoulderPosition ();
-
-	}
-
-	void FixedUpdate ()
-	{
+		ProcessInput ();
 
 		Direction direction = CalculateDirection ();
 		FlipIfNeeded (direction);	
 		PerformMovement (direction);
 
 	}
-	
-	void OnCollisionExit2D (Collision2D collision)
+
+	void ProcessInput ()
 	{
 
-		foreach (ContactPoint2D contact in collision.contacts) {
-			if (contact.otherCollider == groundCollider) {
-				grounded = false;
-				animator.SetBool ("Grounded", grounded);
-			} else if (contact.otherCollider == bodyCollider) {
-				hitWall = false;
+		// jump flag flip irrespective of fixed update time
+		if (Input.GetButtonDown ("P1Jump") == true && (grounded == true || doubleJump == false)) {
+			if (grounded == false && doubleJump == false) {
+				doubleJump = true;
+					
+				// reset y velocity so second jump is as powerful as first one
+				GetComponent<Rigidbody2D> ().velocity = new Vector2 (GetComponent<Rigidbody2D> ().velocity.x, 0.0f);
+			}
+				
+			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0.0f, jumpForce));
+			PlayJumpSound ();
+		}
+		
+		if (Input.GetButtonUp ("P1Action") == true) {
+			isCharging = false;
+		}
+
+		if (Input.GetButtonDown ("P1Action") == true && (potentialBoulder != null || heldBoulder != null)) {
+			isCharging = true;
+		} 
+
+
+	}
+
+	void OnTriggerEnter2D (Collider2D other)
+	{
+
+		if (other.gameObject.layer == LayerMask.NameToLayer ("Boulders")) {
+			if (potentialBoulder == null) {
+				// select this boulder as potential
+				// a queue collection would solve any possible problems with more than 1 object in range
+				potentialBoulder = other.gameObject;
 			}
 		}
 
 	}
+
+	void OnTriggerExit2D (Collider2D other)
+	{
+
+		if (other.gameObject == potentialBoulder) {
+			potentialBoulder = null;
+		}
+
+	}
+
 
 	void OnCollisionEnter2D (Collision2D collision)
 	{
@@ -141,6 +142,20 @@ public class PlayerController : MonoBehaviour
 		}
 
 	}
+	
+	void OnCollisionExit2D (Collision2D collision)
+	{
+		
+		foreach (ContactPoint2D contact in collision.contacts) {
+			if (contact.otherCollider == groundCollider) {
+				grounded = false;
+				animator.SetBool ("Grounded", grounded);
+			} else if (contact.otherCollider == bodyCollider) {
+				hitWall = false;
+			}
+		}
+		
+	}
 
 	void PerformMovement (Direction direction)
 	{
@@ -153,12 +168,6 @@ public class PlayerController : MonoBehaviour
 			directionMultiplier = 1;
 		}
 
-		if (isCharging == true) {
-			// stop any movement if charging
-			directionMultiplier = 0;
-			GetComponent<Rigidbody2D>().velocity = new Vector2 (0.0f, GetComponent<Rigidbody2D>().velocity.y); 
-		}
-
 		if (hitWall == false) {
 			if (directionMultiplier != 0) {
 				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToWalk);
@@ -166,14 +175,26 @@ public class PlayerController : MonoBehaviour
 				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 
-			if (isCharging == false) {
-				GetComponent<Rigidbody2D>().velocity = new Vector2 (directionMultiplier * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
-
-				// play step sound
-				if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep () == true) {
-					PlayWalkingSound ();
-				}
+			if (potentialBoulder != null && heldBoulder == null && isCharging == true) {
+				GetComponent<Rigidbody2D> ().velocity = new Vector2 (0.0f, 0.0f);
+				return;
 			}
+
+			GetComponent<Rigidbody2D> ().velocity = new Vector2 (directionMultiplier * maxSpeed, GetComponent<Rigidbody2D> ().velocity.y);
+
+			// play step sound
+			if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep () == true) {
+				PlayWalkingSound ();
+			}
+		}
+
+		// update held boulder position
+		if (heldBoulder != null) {
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
+
+			Vector3 boulderPosition = this.transform.position;
+			boulderPosition.y += 0.5f;
+			obj.visuals.transform.position = boulderPosition;
 		}
 
 	}
@@ -270,76 +291,55 @@ public class PlayerController : MonoBehaviour
 
 	}
 
+	void ThrowBoulder (float percent)
+	{
+
+		if (heldBoulder != null) {
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
+			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D> ();
+			visualsBody.isKinematic = false;
+
+			int directionMultiplier = 0;
+			if (facingRight == false) {
+				directionMultiplier = -1;
+			} else {
+				directionMultiplier = 1;
+			}
+			float force = percent * boulderThrowForce;
+			visualsBody.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (directionMultiplier * force, 0.5f * force)); // to the side & a bit up
+
+
+			heldBoulder = null;
+		}
+
+	}
+
 	public void FinishedChargingAction ()
 	{
 
 		isCharging = false;
-		if (boulderObject != null) {
-			if (boulderObject.isCarried == false) {
-				PickupBoulder ();
-			} else {
-				ThrowBoulder (1.0f);
-			}
+
+		if (heldBoulder == null && potentialBoulder != null) {
+			heldBoulder = potentialBoulder;
+			potentialBoulder = null;
+
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
+			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D> ();
+			visualsBody.isKinematic = true;
+		} else if (heldBoulder != null) {
+			ThrowBoulder (1.0f);
 		}
 
 	}
 	
 	public void StoppedChargingAction (float percent)
 	{
-		
-		ThrowBoulder (percent);
 
-	}
-
-	void UpdateBoulderPosition ()
-	{
-
-		if (boulderObject != null) {
-			if (boulderObject.isCarried == true) {
-				boulderObject.transform.position = new Vector2 (this.transform.position.x, this.transform.position.y + 1.0f);
-			}
+		print ("Charging to " + percent);
+		if (heldBoulder != null) {
+			ThrowBoulder (percent);
 		}
 
 	}
 
-	void PickupBoulder ()
-	{
-
-		if (boulderObject != null) {
-			if (boulderObject.canBePickedUp == true && boulderObject.isCarried == false) {
-				// disable physics
-				boulderObject.GetComponent<Rigidbody2D>().isKinematic = true;
-
-				boulderObject.isCarried = true;
-
-				PlayPickupSound ();
-			}
-		}
-
-	}
-
-	void ThrowBoulder (float percent)
-	{
-
-		if (boulderObject != null) {
-			if (boulderObject.isCarried == true) {
-				// enable physics
-				boulderObject.GetComponent<Rigidbody2D>().isKinematic = false;
-
-				boulderObject.isCarried = false;
-
-				int directionMultiplier = 0;
-				if (facingRight == false) {
-					directionMultiplier = -1;
-				} else {
-					directionMultiplier = 1;
-				}
-				float force = percent * boulderThrowForce;
-				boulderObject.GetComponent<Rigidbody2D>().AddForce (new Vector2 (directionMultiplier * force, 0.25f * force)); // to the side & a bit up
-
-				boulderObject.PlayThrowSound ();
-			}
-		}
-
-	}
 }
