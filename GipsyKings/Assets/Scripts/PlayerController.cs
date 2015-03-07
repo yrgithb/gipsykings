@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
 	//
 	// Will be set from the boulder trigger script!
 	[HideInInspector]
-	public BoulderObjectScript boulderObject;
+	public BoulderObjectScript
+		boulderObject;
 
 	//
 	// movement related variables
@@ -52,26 +53,21 @@ public class PlayerController : MonoBehaviour
 	private Animator animator;
 	private AudioSource audioSource;
 	public AudioClip[] walkingSounds;
+	private float lastStepTime;
+	public float stepDelay;
 	public AudioClip jumpingSound;
 	public AudioClip[] pickupSounds;
-
-	// Use this for initialization
+	
 	void Start ()
 	{
 
 		isCharging = false;
-		animator = GetComponent<Animator> ();
-		if (animator == null) {
-			print ("Failed fetching animator object for player.");
-		}
+		lastStepTime = -1;
 
-		// default to idle state
+		animator = GetComponent<Animator> ();
 		animator.SetInteger ("Player1AnimationState", 0);
 
 		audioSource = GetComponent<AudioSource> ();
-		if (audioSource == null) {
-			print ("Failed loading audio source for player.");
-		}
 
 	}
 
@@ -80,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
 		if (isCharging == false) {
 			// jump flag flip irrespective of fixed update time
-			if (Input.GetButtonDown ("Jump") == true && (grounded == true || doubleJump == false)) {
+			if (Input.GetButtonDown ("P1Jump") == true && (grounded == true || doubleJump == false)) {
 				if (grounded == false && doubleJump == false) {
 					doubleJump = true;
 
@@ -93,13 +89,13 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 
-		if (Input.GetButtonDown ("Fire1") == true) {
+		if (Input.GetButtonDown ("P1Action") == true) {
 			if (grounded == true) { 
 				isCharging = true;
 			}
 		} 
 
-		if (Input.GetButtonUp ("Fire1") == true) {
+		if (Input.GetButtonUp ("P1Action") == true) {
 			isCharging = false;
 		}
 
@@ -173,7 +169,8 @@ public class PlayerController : MonoBehaviour
 			if (isCharging == false) {
 				rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
 
-				if (directionMultiplier != 0 && grounded == true) {
+				// play step sound
+				if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep () == true) {
 					PlayWalkingSound ();
 				}
 			}
@@ -181,29 +178,32 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	void PlaySoundClip (AudioClip clip, float delay)
+	bool HasEnoughTimePassedSinceLastStep ()
 	{
 
-		audioSource.clip = clip;
-		audioSource.PlayDelayed (delay);
+		bool result = false; 
 
+		if (Time.time - lastStepTime > stepDelay) {
+			result = true;
+		}
+
+		return result;
 	}
 
 	void PlaySoundClip (AudioClip clip)
 	{
 
-		PlaySoundClip(clip, 0.0f);
+		audioSource.PlayOneShot (clip, 1.0f);
 
 	}
 
 	void PlayWalkingSound ()
 	{
 
-		if (audioSource.isPlaying == false) {
-			int max = walkingSounds.Length;
-			int randomIndex = Random.Range (0, max);
-			PlaySoundClip(walkingSounds [randomIndex], 0.1f);
-		}
+		lastStepTime = Time.time;
+		int max = walkingSounds.Length;
+		int randomIndex = Random.Range (0, max);
+		PlaySoundClip (walkingSounds [randomIndex]);
 
 	}
 
@@ -212,14 +212,14 @@ public class PlayerController : MonoBehaviour
 
 		int max = pickupSounds.Length;
 		int randomIndex = Random.Range (0, max);
-		PlaySoundClip(pickupSounds [randomIndex]);
+		PlaySoundClip (pickupSounds [randomIndex]);
 
 	}
 
 	void PlayJumpSound ()
 	{
 
-		PlaySoundClip(jumpingSound);
+		PlaySoundClip (jumpingSound);
 	
 	}
 
@@ -241,7 +241,7 @@ public class PlayerController : MonoBehaviour
 
 		Direction result = Direction.DirectionNone;
 
-		float horizontalAxis = Input.GetAxis ("Horizontal");
+		float horizontalAxis = Input.GetAxis ("P1Horizontal");
 
 		if (horizontalAxis > 0.0f) {
 			result = Direction.DirectionRight;
@@ -335,7 +335,7 @@ public class PlayerController : MonoBehaviour
 					directionMultiplier = 1;
 				}
 				float force = percent * boulderThrowForce;
-				boulderObject.rigidbody2D.AddForce(new Vector2(directionMultiplier * force, 0.25f * force)); // to the side & a bit up
+				boulderObject.rigidbody2D.AddForce (new Vector2 (directionMultiplier * force, 0.25f * force)); // to the side & a bit up
 
 				boulderObject.PlayThrowSound ();
 			}
