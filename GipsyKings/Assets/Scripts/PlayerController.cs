@@ -77,11 +77,29 @@ public class PlayerController : MonoBehaviour
 
 	}
 
+	string playerButton (string buttonName)
+	{
+
+		string result = buttonName;
+
+		string prefix = "P1";
+		if (player == OwningPlayer.Player2) {
+			prefix = "P2";
+		}
+
+		print (result);
+		result = result.Insert (0, prefix);
+		print (result);
+
+		return result;
+
+	}
+
 	void ProcessInput ()
 	{
 
 		// jump flag flip irrespective of fixed update time
-		if (Input.GetButtonDown ("P1Jump") == true && (grounded == true || doubleJump == false)) {
+		if (Input.GetButtonDown (playerButton ("Jump")) == true && (grounded == true || doubleJump == false)) {
 			if (grounded == false && doubleJump == false) {
 				doubleJump = true;
 					
@@ -93,11 +111,11 @@ public class PlayerController : MonoBehaviour
 			PlayJumpSound ();
 		}
 		
-		if (Input.GetButtonUp ("P1Action") == true) {
+		if (Input.GetButtonUp (playerButton ("Action")) == true) {
 			isCharging = false;
 		}
 
-		if (Input.GetButtonDown ("P1Action") == true && (potentialBoulder != null || heldBoulder != null)) {
+		if (Input.GetButtonDown (playerButton ("Action")) == true && (potentialBoulder != null || heldBoulder != null)) {
 			isCharging = true;
 		} 
 
@@ -262,7 +280,7 @@ public class PlayerController : MonoBehaviour
 
 		Direction result = Direction.DirectionNone;
 
-		float horizontalAxis = Input.GetAxis ("P1Horizontal");
+		float horizontalAxis = Input.GetAxis (playerButton ("Horizontal"));
 
 		if (horizontalAxis > 0.0f) {
 			result = Direction.DirectionRight;
