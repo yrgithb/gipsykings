@@ -81,10 +81,10 @@ public class PlayerController : MonoBehaviour
 					doubleJump = true;
 
 					// reset y velocity so second jump is as powerful as first one
-					rigidbody2D.velocity = new Vector2 (rigidbody2D.velocity.x, 0.0f);
+					GetComponent<Rigidbody2D>().velocity = new Vector2 (GetComponent<Rigidbody2D>().velocity.x, 0.0f);
 				}
 
-				rigidbody2D.AddForce (new Vector2 (0.0f, jumpForce));
+				GetComponent<Rigidbody2D>().AddForce (new Vector2 (0.0f, jumpForce));
 				PlayJumpSound ();
 			}
 		}
@@ -156,7 +156,7 @@ public class PlayerController : MonoBehaviour
 		if (isCharging == true) {
 			// stop any movement if charging
 			directionMultiplier = 0;
-			rigidbody2D.velocity = new Vector2 (0.0f, rigidbody2D.velocity.y); 
+			GetComponent<Rigidbody2D>().velocity = new Vector2 (0.0f, GetComponent<Rigidbody2D>().velocity.y); 
 		}
 
 		if (hitWall == false) {
@@ -167,7 +167,7 @@ public class PlayerController : MonoBehaviour
 			}
 
 			if (isCharging == false) {
-				rigidbody2D.velocity = new Vector2 (directionMultiplier * maxSpeed, rigidbody2D.velocity.y);
+				GetComponent<Rigidbody2D>().velocity = new Vector2 (directionMultiplier * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 				// play step sound
 				if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep () == true) {
@@ -308,7 +308,7 @@ public class PlayerController : MonoBehaviour
 		if (boulderObject != null) {
 			if (boulderObject.canBePickedUp == true && boulderObject.isCarried == false) {
 				// disable physics
-				boulderObject.rigidbody2D.isKinematic = true;
+				boulderObject.GetComponent<Rigidbody2D>().isKinematic = true;
 
 				boulderObject.isCarried = true;
 
@@ -324,7 +324,7 @@ public class PlayerController : MonoBehaviour
 		if (boulderObject != null) {
 			if (boulderObject.isCarried == true) {
 				// enable physics
-				boulderObject.rigidbody2D.isKinematic = false;
+				boulderObject.GetComponent<Rigidbody2D>().isKinematic = false;
 
 				boulderObject.isCarried = false;
 
@@ -335,7 +335,7 @@ public class PlayerController : MonoBehaviour
 					directionMultiplier = 1;
 				}
 				float force = percent * boulderThrowForce;
-				boulderObject.rigidbody2D.AddForce (new Vector2 (directionMultiplier * force, 0.25f * force)); // to the side & a bit up
+				boulderObject.GetComponent<Rigidbody2D>().AddForce (new Vector2 (directionMultiplier * force, 0.25f * force)); // to the side & a bit up
 
 				boulderObject.PlayThrowSound ();
 			}
