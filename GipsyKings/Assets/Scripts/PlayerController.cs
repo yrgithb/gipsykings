@@ -18,10 +18,10 @@ public class PlayerController : MonoBehaviour
 	public CircleCollider2D groundCollider;
 	public BoxCollider2D bodyCollider;
 
-	private bool grounded = false;
+	public bool grounded = false;
 	private bool doubleJump = false;
 	public float jumpForce = 1000.0f;
-	private bool hitWall = false;
+	public bool hitWall = false;
 	public float maxSpeed = 10.0f;
 
 	private bool facingRight = true;
@@ -147,13 +147,16 @@ public class PlayerController : MonoBehaviour
 	{
 
 		foreach (ContactPoint2D contact in collision.contacts) {
-			if (contact.otherCollider == groundCollider) {
-				grounded = true;
-				doubleJump = false;
-				animator.SetBool ("Grounded", grounded);
-			} else if (contact.otherCollider == bodyCollider) {
-				hitWall = true;
-				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
+			// process collisions with map
+			if (contact.collider.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
+				if (contact.otherCollider == groundCollider) {
+					grounded = true;
+					doubleJump = false;
+					animator.SetBool ("Grounded", grounded);
+				} else if (contact.otherCollider == bodyCollider) {
+					hitWall = true;
+					animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
+				}
 			}
 		}
 
@@ -163,11 +166,14 @@ public class PlayerController : MonoBehaviour
 	{
 		
 		foreach (ContactPoint2D contact in collision.contacts) {
-			if (contact.otherCollider == groundCollider) {
-				grounded = false;
-				animator.SetBool ("Grounded", grounded);
-			} else if (contact.otherCollider == bodyCollider) {
-				hitWall = false;
+			// process collisions with map
+			if (contact.collider.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
+				if (contact.otherCollider == groundCollider) {
+					grounded = false;
+					animator.SetBool ("Grounded", grounded);
+				} else if (contact.otherCollider == bodyCollider) {
+					hitWall = false;
+				}
 			}
 		}
 		
