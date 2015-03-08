@@ -4,7 +4,7 @@ using System.Collections;
 
 public class HealthBarScript : MonoBehaviour
 {
-	public PlayerController parentGameObject;
+	public PlayerController owningPlayer;
 	public Scrollbar scrollBar;
 	public Vector2 offset;
 	private float chargeTime;
@@ -20,17 +20,16 @@ public class HealthBarScript : MonoBehaviour
 		if (isHealthBar == true) {
 			scrollBar.size = 1.0f;
 		}
+		chargeTime = owningPlayer.boulderChargeAmount;
 
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		// TODO: Move to Start () after determining value, locating this here is needed only for debugging value changes 
-		chargeTime = parentGameObject.boulderChargeAmount;
 
 		// anochor to parent game object
-		Vector2 framePosition = Camera.main.WorldToScreenPoint (parentGameObject.transform.position);
+		Vector2 framePosition = Camera.main.WorldToScreenPoint (owningPlayer.transform.position);
 		framePosition.x += offset.x;
 		framePosition.y += offset.y;
 		
@@ -38,20 +37,21 @@ public class HealthBarScript : MonoBehaviour
 		rectTransform.anchoredPosition = framePosition;
 
 		if (isChargeMeter == true) {
-			if (parentGameObject.isCharging == true) {
+			if (owningPlayer.isCharging == true) {
 				charge += Time.deltaTime;
 
 				if (charge >= chargeTime) {
-					parentGameObject.FinishedChargingAction ();
+					owningPlayer.FinishedChargingAction ();
 					charge = 0.0f;
 				}
 			} else {
 				if (charge > 0.0f) {
-					parentGameObject.StoppedChargingAction (charge / chargeTime);
+					owningPlayer.StoppedChargingAction (charge / chargeTime);
 				}
 				charge = 0.0f;
 			}
 			scrollBar.size = charge / chargeTime;
 		}
+
 	}
 }

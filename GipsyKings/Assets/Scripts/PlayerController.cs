@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 		lastStepTime = -1;
 
 		animator = GetComponent<Animator> ();
-		animator.SetInteger ("Player1AnimationState", 0);
+		animator.SetInteger ("PlayerAnimationState", 0);
 
 		audioSource = GetComponent<AudioSource> ();
 
@@ -87,9 +87,7 @@ public class PlayerController : MonoBehaviour
 			prefix = "P2";
 		}
 
-		print (result);
 		result = result.Insert (0, prefix);
-		print (result);
 
 		return result;
 
@@ -125,7 +123,7 @@ public class PlayerController : MonoBehaviour
 	void OnTriggerEnter2D (Collider2D other)
 	{
 
-		if (other.gameObject.layer == LayerMask.NameToLayer ("Boulders")) {
+		if (other.gameObject.tag == "Boulders") {
 			if (potentialBoulder == null) {
 				// select this boulder as potential
 				// a queue collection would solve any possible problems with more than 1 object in range
@@ -155,7 +153,7 @@ public class PlayerController : MonoBehaviour
 				animator.SetBool ("Grounded", grounded);
 			} else if (contact.otherCollider == bodyCollider) {
 				hitWall = true;
-				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
+				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 		}
 
@@ -188,9 +186,9 @@ public class PlayerController : MonoBehaviour
 
 		if (hitWall == false) {
 			if (directionMultiplier != 0) {
-				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToWalk);
+				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToWalk);
 			} else {
-				animator.SetInteger ("Player1AnimationState", (int)AnimationState.AnimationStateToIdle);
+				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 
 			if (potentialBoulder != null && heldBoulder == null && isCharging == true) {
