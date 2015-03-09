@@ -20,12 +20,6 @@ public class HealthBarScript : MonoBehaviour
 	void Start ()
 	{
 
-		scrollBar.size = 1.0f;
-		maxCharge = 0.0f;
-		charge = 0.0f;
-		lastCharge = 0.0f;
-		objectToNotify = null;
-
 	}
 	
 	// Update is called once per frame

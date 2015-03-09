@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
 	public float health = 10.0f;
 	public HealthBarScript healthBar;
 	public HealthBarScript chargeBar;
+	public Text endGameScreen;
 
 	private GameObject potentialBoulder;
 	private GameObject heldBoulder; 
