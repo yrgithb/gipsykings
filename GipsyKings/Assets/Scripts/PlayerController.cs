@@ -139,12 +139,11 @@ public class PlayerController : MonoBehaviour
 	{
 
 		if (detectedCollisionBoulder == null) {
-			print ("lrt");
 			BoulderObject body = boulderObject.GetComponent<BoulderObject> ();
 			GameObject visuals = body.visuals;
 			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D> ();
 			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
-			if (boulderMagnitude > 0.0f && Mathf.Abs(rigidBody.velocity.x) > 0.01f) { // needs some horizontal velocity, too
+			if (boulderMagnitude > 0.0f) { // needs some horizontal velocity, too
 				detectedCollisionBoulder = boulderObject;
 				print ("Boulder velocity squared magnitude " + boulderMagnitude);
 
