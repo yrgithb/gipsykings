@@ -35,8 +35,8 @@ Alpha (4 weeks from project start)
 - [ ] pebble implementation
 - [x] throwing while moving
 - [ ] placeholder art & improved ui (health bars, etc)
-- [ ] basic impact
-- [ ] death & respawn
+- [x] basic impact
+- [x] death & respawn
 
 Beta 
 
