@@ -30,10 +30,10 @@ PreAlpha (2 weeks from project start) - Completed on 04.03.2015
 
 Alpha (4 weeks from project start)
 
-- [ ] two players
+- [x] two players
 - [ ] double jump and roll mechanic
 - [ ] pebble implementation
-- [ ] throwing while moving
+- [x] throwing while moving
 - [ ] placeholder art & improved ui (health bars, etc)
 - [ ] basic impact
 - [ ] death & respawn
