@@ -76,6 +76,9 @@ public class PlayerController : MonoBehaviour
 		chargeBar.maxCharge = boulderChargeAmount;
 		chargeBar.objectToNotify = this.gameObject;
 
+		// hide end game text view
+		endGameScreen.gameObject.SetActive(false);
+
 	}
 
 	void Update ()
@@ -136,11 +139,12 @@ public class PlayerController : MonoBehaviour
 	{
 
 		if (detectedCollisionBoulder == null) {
+			print ("lrt");
 			BoulderObject body = boulderObject.GetComponent<BoulderObject> ();
 			GameObject visuals = body.visuals;
 			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D> ();
 			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
-			if (boulderMagnitude > 0.0f && rigidBody.velocity.x > 0.01f) { // needs some horizontal velocity, too
+			if (boulderMagnitude > 0.0f && Mathf.Abs(rigidBody.velocity.x) > 0.01f) { // needs some horizontal velocity, too
 				detectedCollisionBoulder = boulderObject;
 				print ("Boulder velocity squared magnitude " + boulderMagnitude);
 
@@ -150,6 +154,8 @@ public class PlayerController : MonoBehaviour
 
 				// Death
 				if (health <= 0.0f) {
+					ShowEndGameText	();
+
 					// hide UI bars
 					healthBar.gameObject.SetActive(false);
 					chargeBar.gameObject.SetActive(false);
@@ -157,6 +163,20 @@ public class PlayerController : MonoBehaviour
 				}
 			}
 		}
+
+	}
+
+	void ShowEndGameText () 
+	{
+
+		string winningPlayer = "Player 1";
+		if (player == OwningPlayer.Player1) {
+			winningPlayer = "Player 2";
+		}
+		string currentText = winningPlayer + " is victorious.\nPress Enter to restart\nEscape to quit";
+		
+		endGameScreen.gameObject.SetActive(true);
+		endGameScreen.text = currentText;
 
 	}
 

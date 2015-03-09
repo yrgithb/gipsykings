@@ -9,7 +9,12 @@ public class EndGameScript : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+	{
+
+		if (Input.GetButtonDown("Submit") == true) {
+			Application.LoadLevel(Application.loadedLevel);
+		}
+
 	}
 }
