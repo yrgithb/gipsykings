@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
 		Player2
 	}
 	public OwningPlayer player;
+	
+	public float health = 10.0f;
+	public HealthBarScript healthBar;
+	public HealthBarScript chargeBar;
 
 	private GameObject potentialBoulder;
 	private GameObject heldBoulder; 
@@ -37,9 +41,9 @@ public class PlayerController : MonoBehaviour
 		AnimationStateToWalk = 1,
 	}
 
-	public bool isCharging;
 	public float boulderChargeAmount;
 	public float boulderThrowForce = 2000.0f;
+	public GameObject detectedCollisionBoulder; 
 
 	// video & audio
 	private Animator animator;
@@ -53,7 +57,6 @@ public class PlayerController : MonoBehaviour
 	void Start ()
 	{
 
-		isCharging = false;
 		lastStepTime = -1;
 
 		animator = GetComponent<Animator> ();
@@ -63,6 +66,12 @@ public class PlayerController : MonoBehaviour
 
 		potentialBoulder = null;
 		heldBoulder = null;
+		detectedCollisionBoulder = null;
+
+		healthBar.chargeTime = health	;
+		healthBar.objectToNotify = this.gameObject;
+		chargeBar.chargeTime = boulderChargeAmount;
+		chargeBar.objectToNotify = this.gameObject;
 
 	}
 
@@ -110,20 +119,40 @@ public class PlayerController : MonoBehaviour
 		}
 		
 		if (Input.GetButtonUp (playerButton ("Action")) == true) {
-			isCharging = false;
+			chargeBar.StopCharging ();
 		}
 
 		if (Input.GetButtonDown (playerButton ("Action")) == true && (potentialBoulder != null || heldBoulder != null)) {
-			isCharging = true;
+			chargeBar.Charge ();
 		} 
 
 
 	}
 
-	void OnTriggerEnter2D (Collider2D other)
+	void CheckForBoulderDamage (GameObject boulderObject)
 	{
 
+		if (detectedCollisionBoulder == null) {
+			BoulderObject body = boulderObject.GetComponent<BoulderObject> ();
+			GameObject visuals = body.visuals;
+			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D> ();
+			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
+			if (boulderMagnitude > 0.0f) {
+				detectedCollisionBoulder = boulderObject;
+
+				// take damage
+				print ("Take damage!");
+			}
+
+		}
+
+	}
+
+	void OnTriggerEnter2D (Collider2D other)
+	{
 		if (other.gameObject.tag == "Boulders") {
+			CheckForBoulderDamage (other.gameObject);
+
 			if (potentialBoulder == null) {
 				// select this boulder as potential
 				// a queue collection would solve any possible problems with more than 1 object in range
@@ -138,6 +167,10 @@ public class PlayerController : MonoBehaviour
 
 		if (other.gameObject == potentialBoulder) {
 			potentialBoulder = null;
+		}
+
+		if (other.gameObject == detectedCollisionBoulder) {
+			detectedCollisionBoulder = null;
 		}
 
 	}
@@ -197,7 +230,7 @@ public class PlayerController : MonoBehaviour
 				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 
-			if (potentialBoulder != null && heldBoulder == null && isCharging == true) {
+			if (potentialBoulder != null && heldBoulder == null && chargeBar.isCharging == true) {
 				GetComponent<Rigidbody2D> ().velocity = new Vector2 (0.0f, 0.0f);
 				return;
 			}
@@ -215,9 +248,14 @@ public class PlayerController : MonoBehaviour
 			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
 
 			Vector3 boulderPosition = this.transform.position;
-			boulderPosition.y += 0.5f;
+			boulderPosition.y += 1.0f;
 			obj.visuals.transform.position = boulderPosition;
 		}
+
+		// update UI bar positions
+		// anochor to parent game object
+		healthBar.UpdateWithParentPosition(this.transform.position);
+		chargeBar.UpdateWithParentPosition(this.transform.position);
 
 	}
 
@@ -330,7 +368,6 @@ public class PlayerController : MonoBehaviour
 			float force = percent * boulderThrowForce;
 			visualsBody.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (directionMultiplier * force, 0.5f * force)); // to the side & a bit up
 
-
 			heldBoulder = null;
 		}
 
@@ -338,8 +375,6 @@ public class PlayerController : MonoBehaviour
 
 	public void FinishedChargingAction ()
 	{
-
-		isCharging = false;
 
 		if (heldBoulder == null && potentialBoulder != null) {
 			heldBoulder = potentialBoulder;
