@@ -6,12 +6,12 @@ public class HealthBarScript : MonoBehaviour
 {
 	public Scrollbar scrollBar;
 	public Vector2 offset;
-	public float chargeTime;
+	public float maxCharge;
 	public bool isHealthBar;
 	public bool isChargeMeter;
 	public bool isCharging;
 
-	private float charge;
+	public float charge;
 	public float lastCharge;
 
 	public GameObject objectToNotify;
@@ -20,10 +20,8 @@ public class HealthBarScript : MonoBehaviour
 	void Start ()
 	{
 
-		if (isHealthBar == true) {
-			scrollBar.size = 1.0f;
-		}
-		chargeTime = 0.0f;
+		scrollBar.size = 1.0f;
+		maxCharge = 0.0f;
 		charge = 0.0f;
 		lastCharge = 0.0f;
 		objectToNotify = null;
@@ -38,7 +36,7 @@ public class HealthBarScript : MonoBehaviour
 			if (isCharging == true) {
 				charge += Time.deltaTime;
 
-				if (charge >= chargeTime) {
+				if (charge >= maxCharge) {
 					lastCharge = 1.0f;
 					charge = 0.0f;
 					objectToNotify.SendMessage("FinishedChargingAction");
@@ -46,12 +44,14 @@ public class HealthBarScript : MonoBehaviour
 				}
 			} else {
 				if (charge > 0.0f) {
-					lastCharge = charge / chargeTime;
+					lastCharge = charge / maxCharge;
 					objectToNotify.SendMessage("StoppedChargingAction", lastCharge);
 				}
 				charge = 0.0f;
 			}
-			scrollBar.size = charge / chargeTime;
+			scrollBar.size = charge / maxCharge;
+		} else {
+			scrollBar.size = charge / maxCharge;
 		}
 
 	}

@@ -68,9 +68,10 @@ public class PlayerController : MonoBehaviour
 		heldBoulder = null;
 		detectedCollisionBoulder = null;
 
-		healthBar.chargeTime = health	;
+		healthBar.charge = health;
+		healthBar.maxCharge = health;
 		healthBar.objectToNotify = this.gameObject;
-		chargeBar.chargeTime = boulderChargeAmount;
+		chargeBar.maxCharge = boulderChargeAmount;
 		chargeBar.objectToNotify = this.gameObject;
 
 	}
@@ -137,19 +138,29 @@ public class PlayerController : MonoBehaviour
 			GameObject visuals = body.visuals;
 			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D> ();
 			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
-			if (boulderMagnitude > 0.0f) {
+			if (boulderMagnitude > 0.0f && rigidBody.velocity.x > 0.01f) { // needs some horizontal velocity, too
 				detectedCollisionBoulder = boulderObject;
+				print ("Boulder velocity squared magnitude " + boulderMagnitude);
 
 				// take damage
-				print ("Take damage!");
-			}
+				health -= 3.5f;
+				healthBar.charge = health;
 
+				// Death
+				if (health <= 0.0f) {
+					// hide UI bars
+					healthBar.gameObject.SetActive(false);
+					chargeBar.gameObject.SetActive(false);
+					this.gameObject.SetActive(false);
+				}
+			}
 		}
 
 	}
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
+
 		if (other.gameObject.tag == "Boulders") {
 			CheckForBoulderDamage (other.gameObject);
 
@@ -392,7 +403,6 @@ public class PlayerController : MonoBehaviour
 	public void StoppedChargingAction (float percent)
 	{
 
-		print ("Charging to " + percent);
 		if (heldBoulder != null) {
 			ThrowBoulder (percent);
 		}
