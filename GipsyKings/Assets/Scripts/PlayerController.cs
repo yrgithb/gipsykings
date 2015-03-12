@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour
 	public float stepDelay;
 	public AudioClip jumpingSound;
 	public AudioClip[] pickupSounds;
+	public AudioClip[] hitSounds;
 	
 	void Start ()
 	{
@@ -77,7 +78,7 @@ public class PlayerController : MonoBehaviour
 		chargeBar.objectToNotify = this.gameObject;
 
 		// hide end game text view
-		endGameScreen.gameObject.SetActive(false);
+		endGameScreen.gameObject.SetActive (false);
 
 	}
 
@@ -151,21 +152,26 @@ public class PlayerController : MonoBehaviour
 				health -= 3.5f;
 				healthBar.charge = health;
 
+				PlayHitSound ();
+
 				// Death
 				if (health <= 0.0f) {
-					ShowEndGameText	();
+					ShowEndGameText ();
 
 					// hide UI bars
-					healthBar.gameObject.SetActive(false);
-					chargeBar.gameObject.SetActive(false);
-					this.gameObject.SetActive(false);
+					healthBar.gameObject.SetActive (false);
+					chargeBar.gameObject.SetActive (false);
+
+					// dying 
+					this.gameObject.transform.localScale = new Vector3 (0.8f, 0.8f, 0.8f);
+					//this.gameObject.SetActive(false);
 				}
 			}
 		}
 
 	}
 
-	void ShowEndGameText () 
+	void ShowEndGameText ()
 	{
 
 		string winningPlayer = "Player 1";
@@ -174,7 +180,7 @@ public class PlayerController : MonoBehaviour
 		}
 		string currentText = winningPlayer + " is victorious.\nPress Enter to restart\nEscape to quit";
 		
-		endGameScreen.gameObject.SetActive(true);
+		endGameScreen.gameObject.SetActive (true);
 		endGameScreen.text = currentText;
 
 	}
@@ -286,8 +292,8 @@ public class PlayerController : MonoBehaviour
 
 		// update UI bar positions
 		// anochor to parent game object
-		healthBar.UpdateWithParentPosition(this.transform.position);
-		chargeBar.UpdateWithParentPosition(this.transform.position);
+		healthBar.UpdateWithParentPosition (this.transform.position);
+		chargeBar.UpdateWithParentPosition (this.transform.position);
 
 	}
 
@@ -307,6 +313,15 @@ public class PlayerController : MonoBehaviour
 	{
 
 		audioSource.PlayOneShot (clip, 1.0f);
+
+	}
+
+	void PlayHitSound ()
+	{
+
+		int max = hitSounds.Length;
+		int randomIndex = Random.Range (0, max);
+		PlaySoundClip (hitSounds [randomIndex]);
 
 	}
 
