@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
 	public AudioClip jumpingSound;
 	public AudioClip[] pickupSounds;
 	public AudioClip[] hitSounds;
+	public AudioClip[] throwSounds;
 	
 	void Start ()
 	{
@@ -316,12 +317,26 @@ public class PlayerController : MonoBehaviour
 
 	}
 
+	void PlayRandomClip (AudioClip[] clip)
+	{
+
+		int max = clip.Length;
+		int randomIndex = Random.Range (0, max);
+		PlaySoundClip (clip [randomIndex]);
+
+	}
+
 	void PlayHitSound ()
 	{
 
-		int max = hitSounds.Length;
-		int randomIndex = Random.Range (0, max);
-		PlaySoundClip (hitSounds [randomIndex]);
+		PlayRandomClip (hitSounds);
+
+	}
+
+	void PlayThrowSound ()
+	{
+
+		PlayRandomClip (throwSounds);
 
 	}
 
@@ -329,18 +344,14 @@ public class PlayerController : MonoBehaviour
 	{
 
 		lastStepTime = Time.time;
-		int max = walkingSounds.Length;
-		int randomIndex = Random.Range (0, max);
-		PlaySoundClip (walkingSounds [randomIndex]);
+		PlayRandomClip (walkingSounds);
 
 	}
 
 	void PlayPickupSound ()
 	{
 
-		int max = pickupSounds.Length;
-		int randomIndex = Random.Range (0, max);
-		PlaySoundClip (pickupSounds [randomIndex]);
+		PlayRandomClip (pickupSounds);
 
 	}
 
@@ -416,6 +427,8 @@ public class PlayerController : MonoBehaviour
 			visualsBody.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (directionMultiplier * force, 0.5f * force)); // to the side & a bit up
 
 			heldBoulder = null;
+
+			PlayThrowSound ();
 		}
 
 	}
@@ -426,6 +439,8 @@ public class PlayerController : MonoBehaviour
 		if (heldBoulder == null && potentialBoulder != null) {
 			heldBoulder = potentialBoulder;
 			potentialBoulder = null;
+
+			PlayPickupSound ();
 
 			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
 			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D> ();
