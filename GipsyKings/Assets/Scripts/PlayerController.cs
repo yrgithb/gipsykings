@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
 				print ("Boulder velocity squared magnitude " + boulderMagnitude);
 
 				// take damage
-				health -= 3.5f;
+				health -= 5.1f;
 				healthBar.charge = health;
 
 				PlayHitSound ();
@@ -164,7 +164,7 @@ public class PlayerController : MonoBehaviour
 					chargeBar.gameObject.SetActive (false);
 
 					// dying 
-					this.gameObject.transform.localScale = new Vector3 (0.8f, 0.8f, 0.8f);
+					this.gameObject.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 					//this.gameObject.SetActive(false);
 				}
 			}
