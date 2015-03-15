@@ -30,6 +30,13 @@ public class PlayerController : MonoBehaviour
 	public bool hitWall = false;
 	public float maxSpeed = 10.0f;
 
+	public bool dashing = false;
+	public float dashDuration = 0.25f;
+	private float currentDashDuration = 0.0f;
+	public float dashForce = 100.0f;
+	public float dashInterval = 1.0f;
+	private float timeSinceLastDash;
+
 	private bool facingRight = true;
 	enum Direction
 	{
@@ -81,12 +88,18 @@ public class PlayerController : MonoBehaviour
 		// hide end game text view
 		endGameScreen.gameObject.SetActive (false);
 
+		dashing = false;
+		timeSinceLastDash = dashInterval;
+		currentDashDuration = dashDuration;
+
 	}
 
 	void Update ()
 	{
 
 		ProcessInput ();
+
+		timeSinceLastDash += Time.deltaTime;
 
 		Direction direction = CalculateDirection ();
 		FlipIfNeeded (direction);	
@@ -132,8 +145,11 @@ public class PlayerController : MonoBehaviour
 
 		if (Input.GetButtonDown (playerButton ("Action")) == true && (potentialBoulder != null || heldBoulder != null)) {
 			chargeBar.Charge ();
-		} 
+		}
 
+		if (Input.GetButtonDown (playerButton ("Fire3")) == true && dashing == false && timeSinceLastDash >= dashInterval) {
+			dashing = true;
+		}
 
 	}
 
@@ -269,12 +285,31 @@ public class PlayerController : MonoBehaviour
 				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 
+			// block movement while picking up a boulder
 			if (potentialBoulder != null && heldBoulder == null && chargeBar.isCharging == true) {
 				GetComponent<Rigidbody2D> ().velocity = new Vector2 (0.0f, 0.0f);
 				return;
 			}
 
 			GetComponent<Rigidbody2D> ().velocity = new Vector2 (directionMultiplier * maxSpeed, GetComponent<Rigidbody2D> ().velocity.y);
+
+			// dashing
+			if (dashing == true) {
+				if (currentDashDuration > 0.0f) {
+					currentDashDuration -= Time.deltaTime;
+
+					int dir = 1;
+					if (facingRight == false) {
+						dir = -1; 
+					}
+
+					GetComponent<Rigidbody2D> ().AddForce(new Vector2 (dir * dashForce, 0.0f));
+				} else {
+					timeSinceLastDash = 0.0f;
+					dashing = false;
+					currentDashDuration = dashDuration;
+				}
+			}
 
 			// play step sound
 			if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep () == true) {
