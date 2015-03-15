@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour
 	public AudioClip[] pickupSounds;
 	public AudioClip[] hitSounds;
 	public AudioClip[] throwSounds;
+	public AudioClip dashSound;
 	
 	void Start ()
 	{
@@ -147,8 +148,9 @@ public class PlayerController : MonoBehaviour
 			chargeBar.Charge ();
 		}
 
-		if (Input.GetButtonDown (playerButton ("Fire3")) == true && dashing == false && timeSinceLastDash >= dashInterval) {
+		if (Input.GetButtonDown (playerButton ("Dash")) == true && dashing == false && timeSinceLastDash >= dashInterval) {
 			dashing = true;
+			PlayDashSound ();
 		}
 
 	}
@@ -359,6 +361,13 @@ public class PlayerController : MonoBehaviour
 		int randomIndex = Random.Range (0, max);
 		PlaySoundClip (clip [randomIndex]);
 
+	}
+
+	void PlayDashSound ()
+	{
+
+		PlaySoundClip(dashSound);
+	
 	}
 
 	void PlayHitSound ()

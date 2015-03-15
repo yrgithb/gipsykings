@@ -8,6 +8,7 @@ public class CameraFollowScript : MonoBehaviour
 
 	// autosizing
 	public float minimumCameraSize = 5.0f;
+	public float maximumCameraSize = 15.0f;
 	private float smoothTime = 0.15f;
 	private Vector3 dampingVelocity;
 
@@ -64,8 +65,10 @@ public class CameraFollowScript : MonoBehaviour
 		//computing the size
 		float camSizeX = Mathf.Max(width, minSizeX);
 		camSizeX += 5.0f;
-		camera.orthographicSize = Mathf.Max(height + 2.0f,
-		                                    camSizeX * Screen.height / Screen.width, minimumCameraSize);
+
+		float size = Mathf.Max(height + 2.0f, camSizeX * Screen.height / Screen.width, minimumCameraSize);
+		size = Mathf.Min(size, maximumCameraSize);
+		camera.orthographicSize = size;
 
 	}
 
