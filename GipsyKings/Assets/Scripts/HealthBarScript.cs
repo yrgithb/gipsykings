@@ -27,7 +27,12 @@ public class HealthBarScript : MonoBehaviour
 	{
 
 		if (isChargeMeter == true) {
+			// hide/show charger if needed
+			CanvasGroup groupElement = GetComponent<CanvasGroup> ();
+
 			if (isCharging == true) {
+				groupElement.alpha = 1.0f;
+
 				charge += Time.deltaTime;
 
 				if (charge >= maxCharge) {
@@ -41,7 +46,8 @@ public class HealthBarScript : MonoBehaviour
 					lastCharge = charge / maxCharge;
 					objectToNotify.SendMessage("StoppedChargingAction", lastCharge);
 				}
-				charge = 0.0f;
+				charge = 0.0f;			
+				groupElement.alpha = 0.0f;
 			}
 			scrollBar.size = charge / maxCharge;
 		} else {
