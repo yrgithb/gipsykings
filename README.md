@@ -1,4 +1,4 @@
-Gipsy Combat
+Boulderados
 ============
 
 Two-player versus game for PC. Core gameplay: one boulder is available, which takes 0.7 seconds to pick up. After it is picked up, the player can throw it, killing the opposing player upon impact.
@@ -9,7 +9,7 @@ Defining the gameplay:
 
 - boulder pick-up and charge timers (influenced by biome type)
 - boulder physics
-- pebble counter-play (interrupting the other player with pebble)
+- boulders provide different skills/perks
 - player mobility (i.e. via double jump/air jump and roll/air roll and combo of both)
 - level design (3-heights levels in different biomes)
 - if the throwing player is higher than the player being thrown at, the boulder will be influenced by gravity and fall faster and do more damage
@@ -31,29 +31,26 @@ PreAlpha (2 weeks from project start) - Completed on 04.03.2015
 Alpha (4 weeks from project start)
 
 - [x] two players
-- [ ] double jump and roll mechanic
-- [ ] pebble implementation
+- [x] double jump and roll mechanic
 - [x] throwing while moving
-- [ ] placeholder art & improved ui (health bars, etc)
+- [x] improved ui (health bars, etc)
 - [x] basic impact
 - [x] death & respawn
 
-Beta 
+Beta (end of March 2015)
 
-- [ ] advanced throwing (full gravity implementation, force, charge finetuning)
-- [ ] advanced impact (ragdoll physics, dismembering)
-- [ ] detailed animations for:
-- hands, including elbow and shoulder joints
-- head, including neck, exploding, breakdown of head
-- torso, including removing of hands, legs, head, breaking of torso
-- legs, including knee and hip joints
-- [ ] better art
-- [ ] biomes which influence pickup times
+- [ ] different types of bouders which influence gameplay while wielding the boulder:
+- speed boulder (30% increased movement speed)
+- big boulder (one-shots enemy player)
+- shield boulder (less damage taken)
+- jumpy boulder (30% higher jump)
+- dash boulder (50% less dash cooldown)
 - [ ] basic level design (multi level arena with platforms etc)
+- [ ] three levels with different size
+- [ ] improved UI which offers level choice and shows the winning player
 
 Final
 
-- [ ] rocksize variations with included physics implication
 - [ ] music and sounds
 - [ ] final art
 - [ ] final level design
