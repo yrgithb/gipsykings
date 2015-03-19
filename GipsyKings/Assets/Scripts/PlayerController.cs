@@ -163,7 +163,7 @@ public class PlayerController : MonoBehaviour
 			GameObject visuals = body.visuals;
 			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D> ();
 			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
-			if (boulderMagnitude > 0.1f) {
+			if (boulderMagnitude > 9.0f) {
 				detectedCollisionBoulder = boulderObject;
 				print ("Boulder velocity squared magnitude " + boulderMagnitude);
 
