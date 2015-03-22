@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public float boulderChargeAmount;
+	public float boulderPickupAmount;
 	public float boulderThrowForce = 2000.0f;
 	public GameObject detectedCollisionBoulder; 
 
@@ -83,7 +84,7 @@ public class PlayerController : MonoBehaviour
 		healthBar.charge = health;
 		healthBar.maxCharge = health;
 		healthBar.objectToNotify = this.gameObject;
-		chargeBar.maxCharge = boulderChargeAmount;
+		chargeBar.maxCharge = boulderPickupAmount;
 		chargeBar.objectToNotify = this.gameObject;
 
 		// hide end game text view
@@ -475,6 +476,8 @@ public class PlayerController : MonoBehaviour
 			PlayThrowSound ();
 		}
 
+		chargeBar.maxCharge = boulderPickupAmount;
+
 	}
 
 	public void FinishedChargingAction ()
@@ -482,6 +485,7 @@ public class PlayerController : MonoBehaviour
 
 		if (heldBoulder == null && potentialBoulder != null) {
 			heldBoulder = potentialBoulder;
+			chargeBar.maxCharge = boulderChargeAmount;
 			potentialBoulder = null;
 
 			PlayPickupSound ();
@@ -500,6 +504,17 @@ public class PlayerController : MonoBehaviour
 
 		if (heldBoulder != null) {
 			ThrowBoulder (percent);
+		}
+
+	}
+
+	public void ToggleInstantPickup ()
+	{
+		
+		boulderPickupAmount = 0.0f;
+
+		if (heldBoulder == null) {
+			chargeBar.maxCharge = boulderPickupAmount;
 		}
 
 	}
