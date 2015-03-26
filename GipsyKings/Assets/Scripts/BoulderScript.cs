@@ -15,6 +15,7 @@ public class BoulderScript : MonoBehaviour
 
 	public BoulderType type;
 	public SpriteRenderer iconSpriteRenderer;
+	public float damage = 5.1f;
 
 	// Use this for initialization
 	void Start()
@@ -22,6 +23,12 @@ public class BoulderScript : MonoBehaviour
 
 		// set image according to type
 		SetImage();
+
+		// force damage for sniper boulders
+		if (type == BoulderType.Sniper)
+		{
+			damage = 1000.0f; // one shot
+		}
 
 	}
 

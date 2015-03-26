@@ -11,14 +11,14 @@ public class PlayerController : MonoBehaviour
 		Player2
 	}
 	public OwningPlayer player;
-	
+
 	public float health = 10.0f;
 	public HealthBarScript healthBar;
 	public HealthBarScript chargeBar;
 	public Text endGameScreen;
 
 	private GameObject potentialBoulder;
-	private GameObject heldBoulder; 
+	private GameObject heldBoulder;
 
 	// movement
 	public CircleCollider2D groundCollider;
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
 	public float boulderChargeAmount;
 	public float boulderPickupAmount;
 	public float boulderThrowForce = 2000.0f;
-	public GameObject detectedCollisionBoulder; 
+	public GameObject detectedCollisionBoulder;
 
 	// video & audio
 	private Animator animator;
@@ -66,16 +66,16 @@ public class PlayerController : MonoBehaviour
 	public AudioClip[] hitSounds;
 	public AudioClip[] throwSounds;
 	public AudioClip dashSound;
-	
-	void Start ()
+
+	void Start()
 	{
 
 		lastStepTime = -1;
 
-		animator = GetComponent<Animator> ();
-		animator.SetInteger ("PlayerAnimationState", 0);
+		animator = GetComponent<Animator>();
+		animator.SetInteger("PlayerAnimationState", 0);
 
-		audioSource = GetComponent<AudioSource> ();
+		audioSource = GetComponent<AudioSource>();
 
 		potentialBoulder = null;
 		heldBoulder = null;
@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
 		chargeBar.objectToNotify = this.gameObject;
 
 		// hide end game text view
-		endGameScreen.gameObject.SetActive (false);
+		endGameScreen.gameObject.SetActive(false);
 
 		dashing = false;
 		timeSinceLastDash = dashInterval;
@@ -96,94 +96,110 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	void Update ()
+	void Update()
 	{
 
-		ProcessInput ();
+		ProcessInput();
 
 		timeSinceLastDash += Time.deltaTime;
 
-		Direction direction = CalculateDirection ();
-		FlipIfNeeded (direction);	
-		PerformMovement (direction);
+		Direction direction = CalculateDirection();
+		FlipIfNeeded(direction);
+		PerformMovement(direction);
 
 	}
 
-	string playerButton (string buttonName)
+	string playerButton(string buttonName)
 	{
 
 		string result = buttonName;
 
 		string prefix = "P1";
-		if (player == OwningPlayer.Player2) {
+		if (player == OwningPlayer.Player2)
+		{
 			prefix = "P2";
 		}
 
-		result = result.Insert (0, prefix);
+		result = result.Insert(0, prefix);
 
 		return result;
 
 	}
 
-	void ProcessInput ()
+	void ProcessInput()
 	{
 
 		// jump flag flip irrespective of fixed update time
-		if (Input.GetButtonDown (playerButton ("Jump")) == true && (grounded == true || doubleJump == false)) {
-			if (grounded == false && doubleJump == false) {
+		if (Input.GetButtonDown(playerButton("Jump")) == true && (grounded == true || doubleJump == false))
+		{
+			if (grounded == false && doubleJump == false)
+			{
 				doubleJump = true;
-					
+
 				// reset y velocity so second jump is as powerful as first one
-				GetComponent<Rigidbody2D> ().velocity = new Vector2 (GetComponent<Rigidbody2D> ().velocity.x, 0.0f);
+				GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, 0.0f);
 			}
-				
-			GetComponent<Rigidbody2D> ().AddForce (new Vector2 (0.0f, jumpForce));
-			PlayJumpSound ();
-		}
-		
-		if (Input.GetButtonUp (playerButton ("Action")) == true) {
-			chargeBar.StopCharging ();
+
+			GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpForce));
+			PlayJumpSound();
 		}
 
-		if (Input.GetButtonDown (playerButton ("Action")) == true && (potentialBoulder != null || heldBoulder != null)) {
-			chargeBar.Charge ();
+		if (Input.GetButtonUp(playerButton("Action")) == true)
+		{
+			chargeBar.StopCharging();
 		}
 
-		if (Input.GetButtonDown (playerButton ("Dash")) == true && dashing == false && timeSinceLastDash >= dashInterval) {
+		if (Input.GetButtonDown(playerButton("Action")) == true && (potentialBoulder != null || heldBoulder != null))
+		{
+			chargeBar.Charge();
+		}
+
+		if (Input.GetButtonDown(playerButton("Dash")) == true && dashing == false && timeSinceLastDash >= dashInterval)
+		{
 			dashing = true;
-			PlayDashSound ();
+			PlayDashSound();
 		}
 
 	}
 
-	void CheckForBoulderDamage (GameObject boulderObject)
+	void CheckForBoulderDamage(GameObject boulderObject)
 	{
 
-		if (detectedCollisionBoulder == null) {
-			BoulderObject body = boulderObject.GetComponent<BoulderObject> ();
+		if (detectedCollisionBoulder == null)
+		{
+			BoulderObject body = boulderObject.GetComponent<BoulderObject>();
 			GameObject visuals = body.visuals;
-			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D> ();
+			BoulderScript boulderScript = boulderObject.GetComponentInParent<BoulderScript>();
+
+			if (boulderScript == null)
+			{
+				print("WHOOPS");
+			}
+
+			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D>();
 			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
-			if (boulderMagnitude > 9.0f) {
+			if (boulderMagnitude > 9.0f)
+			{
 				detectedCollisionBoulder = boulderObject;
-				print ("Boulder velocity squared magnitude " + boulderMagnitude);
+				print("Boulder velocity squared magnitude " + boulderMagnitude);
 
 				// take damage
-				health -= 5.1f;
+				health -= boulderScript.damage;
 				healthBar.charge = health;
 
-				PlayHitSound ();
+				PlayHitSound();
 
 				// Death
-				if (health <= 0.0f) {
-					ShowEndGameText ();
+				if (health <= 0.0f)
+				{
+					ShowEndGameText();
 
 					// hide UI bars
-					healthBar.gameObject.SetActive (false);
-					chargeBar.gameObject.SetActive (false);
+					healthBar.gameObject.SetActive(false);
+					chargeBar.gameObject.SetActive(false);
 
 					// dying 
-					this.gameObject.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+					this.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 					//this.gameObject.SetActive(false);
 				}
 			}
@@ -191,27 +207,30 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	void ShowEndGameText ()
+	void ShowEndGameText()
 	{
 
 		string winningPlayer = "Player 1";
-		if (player == OwningPlayer.Player1) {
+		if (player == OwningPlayer.Player1)
+		{
 			winningPlayer = "Player 2";
 		}
 		string currentText = winningPlayer + " is victorious.\nPress Enter to restart\nEscape to quit";
-		
-		endGameScreen.gameObject.SetActive (true);
+
+		endGameScreen.gameObject.SetActive(true);
 		endGameScreen.text = currentText;
 
 	}
 
-	void OnTriggerEnter2D (Collider2D other)
+	void OnTriggerEnter2D(Collider2D other)
 	{
 
-		if (other.gameObject.tag == "Boulders") {
-			CheckForBoulderDamage (other.gameObject);
+		if (other.gameObject.tag == "Boulders")
+		{
+			CheckForBoulderDamage(other.gameObject);
 
-			if (potentialBoulder == null) {
+			if (potentialBoulder == null)
+			{
 				// select this boulder as potential
 				// a queue collection would solve any possible problems with more than 1 object in range
 				potentialBoulder = other.gameObject;
@@ -220,94 +239,119 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	void OnTriggerExit2D (Collider2D other)
+	void OnTriggerExit2D(Collider2D other)
 	{
 
-		if (other.gameObject == potentialBoulder) {
+		if (other.gameObject == potentialBoulder)
+		{
 			potentialBoulder = null;
 		}
 
-		if (other.gameObject == detectedCollisionBoulder) {
+		if (other.gameObject == detectedCollisionBoulder)
+		{
 			detectedCollisionBoulder = null;
 		}
 
 	}
 
 
-	void OnCollisionEnter2D (Collision2D collision)
+	void OnCollisionEnter2D(Collision2D collision)
 	{
 
-		foreach (ContactPoint2D contact in collision.contacts) {
+		foreach (ContactPoint2D contact in collision.contacts)
+		{
 			// process collisions with map
-			if (contact.collider.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
-				if (contact.otherCollider == groundCollider) {
+			if (contact.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+			{
+				if (contact.otherCollider == groundCollider)
+				{
 					grounded = true;
 					doubleJump = false;
-					animator.SetBool ("Grounded", grounded);
-				} else if (contact.otherCollider == bodyCollider) {
+					animator.SetBool("Grounded", grounded);
+				}
+				else if (contact.otherCollider == bodyCollider)
+				{
 					hitWall = true;
-					animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
+					animator.SetInteger("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
 				}
 			}
 		}
 
 	}
-	
-	void OnCollisionExit2D (Collision2D collision)
+
+	void OnCollisionExit2D(Collision2D collision)
 	{
-		
-		foreach (ContactPoint2D contact in collision.contacts) {
+
+		foreach (ContactPoint2D contact in collision.contacts)
+		{
 			// process collisions with map
-			if (contact.collider.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
-				if (contact.otherCollider == groundCollider) {
+			if (contact.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+			{
+				if (contact.otherCollider == groundCollider)
+				{
 					grounded = false;
-					animator.SetBool ("Grounded", grounded);
-				} else if (contact.otherCollider == bodyCollider) {
+					animator.SetBool("Grounded", grounded);
+				}
+				else if (contact.otherCollider == bodyCollider)
+				{
 					hitWall = false;
 				}
 			}
 		}
-		
+
 	}
 
-	void PerformMovement (Direction direction)
+	void PerformMovement(Direction direction)
 	{
 
 		// add movement
 		int directionMultiplier = 0;
-		if (direction == Direction.DirectionLeft) {
+		if (direction == Direction.DirectionLeft)
+		{
 			directionMultiplier = -1;
-		} else if (direction == Direction.DirectionRight) {
+		}
+		else if (direction == Direction.DirectionRight)
+		{
 			directionMultiplier = 1;
 		}
 
-		if (hitWall == false) {
-			if (directionMultiplier != 0) {
-				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToWalk);
-			} else {
-				animator.SetInteger ("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
+		if (hitWall == false)
+		{
+			if (directionMultiplier != 0)
+			{
+				animator.SetInteger("PlayerAnimationState", (int)AnimationState.AnimationStateToWalk);
+			}
+			else
+			{
+				animator.SetInteger("PlayerAnimationState", (int)AnimationState.AnimationStateToIdle);
 			}
 
 			// block movement while picking up a boulder
-			if (potentialBoulder != null && heldBoulder == null && chargeBar.isCharging == true) {
-				GetComponent<Rigidbody2D> ().velocity = new Vector2 (0.0f, 0.0f);
+			if (potentialBoulder != null && heldBoulder == null && chargeBar.isCharging == true)
+			{
+				GetComponent<Rigidbody2D>().velocity = new Vector2(0.0f, 0.0f);
 				return;
 			}
 
-			GetComponent<Rigidbody2D> ().velocity = new Vector2 (directionMultiplier * maxSpeed, GetComponent<Rigidbody2D> ().velocity.y);
+			GetComponent<Rigidbody2D>().velocity = new Vector2(directionMultiplier * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 			// dashing
-			if (dashing == true) {
-				if (currentDashDuration > 0.0f) {
+			if (dashing == true)
+			{
+				if (currentDashDuration > 0.0f)
+				{
 					currentDashDuration -= Time.deltaTime;
 
 					int dir = 1;
-					if (facingRight == false) {
-						dir = -1; 
+					if (facingRight == false)
+					{
+						dir = -1;
 					}
 
-					GetComponent<Rigidbody2D> ().AddForce(new Vector2 (dir * dashForce, 0.0f));
-				} else {
+					GetComponent<Rigidbody2D>().AddForce(new Vector2(dir * dashForce, 0.0f));
+				}
+				else
+				{
 					timeSinceLastDash = 0.0f;
 					dashing = false;
 					currentDashDuration = dashDuration;
@@ -315,14 +359,16 @@ public class PlayerController : MonoBehaviour
 			}
 
 			// play step sound
-			if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep () == true) {
-				PlayWalkingSound ();
+			if (directionMultiplier != 0 && grounded == true && HasEnoughTimePassedSinceLastStep() == true)
+			{
+				PlayWalkingSound();
 			}
 		}
 
 		// update held boulder position
-		if (heldBoulder != null) {
-			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
+		if (heldBoulder != null)
+		{
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject>();
 
 			Vector3 boulderPosition = this.transform.position;
 			boulderPosition.y += 1.0f;
@@ -331,105 +377,110 @@ public class PlayerController : MonoBehaviour
 
 		// update UI bar positions
 		// anochor to parent game object
-		healthBar.UpdateWithParentPosition (this.transform.position);
-		chargeBar.UpdateWithParentPosition (this.transform.position);
+		healthBar.UpdateWithParentPosition(this.transform.position);
+		chargeBar.UpdateWithParentPosition(this.transform.position);
 
 	}
 
-	bool HasEnoughTimePassedSinceLastStep ()
+	bool HasEnoughTimePassedSinceLastStep()
 	{
 
-		bool result = false; 
+		bool result = false;
 
-		if (Time.time - lastStepTime > stepDelay) {
+		if (Time.time - lastStepTime > stepDelay)
+		{
 			result = true;
 		}
 
 		return result;
 	}
 
-	void PlaySoundClip (AudioClip clip)
+	void PlaySoundClip(AudioClip clip)
 	{
 
-		audioSource.PlayOneShot (clip, 1.0f);
+		audioSource.PlayOneShot(clip, 1.0f);
 
 	}
 
-	void PlayRandomClip (AudioClip[] clip)
+	void PlayRandomClip(AudioClip[] clip)
 	{
 
 		int max = clip.Length;
-		int randomIndex = Random.Range (0, max);
-		PlaySoundClip (clip [randomIndex]);
+		int randomIndex = Random.Range(0, max);
+		PlaySoundClip(clip[randomIndex]);
 
 	}
 
-	void PlayDashSound ()
+	void PlayDashSound()
 	{
 
 		PlaySoundClip(dashSound);
-	
+
 	}
 
-	void PlayHitSound ()
+	void PlayHitSound()
 	{
 
-		PlayRandomClip (hitSounds);
+		PlayRandomClip(hitSounds);
 
 	}
 
-	void PlayThrowSound ()
+	void PlayThrowSound()
 	{
 
-		PlayRandomClip (throwSounds);
+		PlayRandomClip(throwSounds);
 
 	}
 
-	void PlayWalkingSound ()
+	void PlayWalkingSound()
 	{
 
 		lastStepTime = Time.time;
-		PlayRandomClip (walkingSounds);
+		PlayRandomClip(walkingSounds);
 
 	}
 
-	void PlayPickupSound ()
+	void PlayPickupSound()
 	{
 
-		PlayRandomClip (pickupSounds);
+		PlayRandomClip(pickupSounds);
 
 	}
 
-	void PlayJumpSound ()
+	void PlayJumpSound()
 	{
 
-		PlaySoundClip (jumpingSound);
-	
+		PlaySoundClip(jumpingSound);
+
 	}
 
-	void FlipIfNeeded (Direction direction)
+	void FlipIfNeeded(Direction direction)
 	{
 
 		// flip if needed
-		if ((direction == Direction.DirectionRight && facingRight == false) || (direction == Direction.DirectionLeft && facingRight == true)) {
-			Flip ();
+		if ((direction == Direction.DirectionRight && facingRight == false) || (direction == Direction.DirectionLeft && facingRight == true))
+		{
+			Flip();
 
 			// if direction was changed then wall flag should be reset
-			ResetHitWallFlag ();
-		}	
+			ResetHitWallFlag();
+		}
 
 	}
 
-	Direction CalculateDirection ()
+	Direction CalculateDirection()
 	{
 
 		Direction result = Direction.DirectionNone;
 
-		float horizontalAxis = Input.GetAxis (playerButton ("Horizontal"));
+		float horizontalAxis = Input.GetAxis(playerButton("Horizontal"));
 
-		if (horizontalAxis > 0.0f) {
+		if (horizontalAxis > 0.0f)
+		{
 			result = Direction.DirectionRight;
-		} else if (horizontalAxis < 0.0f) {
+		}
+		else if (horizontalAxis < 0.0f)
+		{
 			result = Direction.DirectionLeft;
 		}
 
@@ -437,83 +488,109 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	void Flip ()
+	void Flip()
 	{
 
 		facingRight = !facingRight;
 		Vector3 scale = transform.localScale;
 		scale.x *= -1;
 		transform.localScale = scale;
-	
+
 	}
 
-	void ResetHitWallFlag ()
+	void ResetHitWallFlag()
 	{
 
 		hitWall = false;
 
 	}
 
-	void ThrowBoulder (float percent)
+	void ThrowBoulder(float percent)
 	{
 
-		if (heldBoulder != null) {
-			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
-			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D> ();
+		if (heldBoulder != null)
+		{
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject>();
+			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D>();
 			visualsBody.isKinematic = false;
 
 			int directionMultiplier = 0;
-			if (facingRight == false) {
+			if (facingRight == false)
+			{
 				directionMultiplier = -1;
-			} else {
+			}
+			else
+			{
 				directionMultiplier = 1;
 			}
 			float force = percent * boulderThrowForce;
-			visualsBody.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (directionMultiplier * force, 0.5f * force)); // to the side & a bit up
+			visualsBody.GetComponent<Rigidbody2D>().AddForce(new Vector2(directionMultiplier * force, 0.5f * force)); // to the side & a bit up
 
 			heldBoulder = null;
 
-			PlayThrowSound ();
+			PlayThrowSound();
 		}
 
 		chargeBar.maxCharge = boulderPickupAmount;
 
+		ResetBoulderBonuses();
+
 	}
 
-	public void FinishedChargingAction ()
+	void ResetBoulderBonuses()
 	{
 
-		if (heldBoulder == null && potentialBoulder != null) {
+		// remove any passive bonuses gathered from the boulders
+
+		// restore speed
+
+		// restore damage taken
+
+		// restore jump force
+
+		// restore dash cooldown
+
+	}
+
+	public void FinishedChargingAction()
+	{
+
+		if (heldBoulder == null && potentialBoulder != null)
+		{
 			heldBoulder = potentialBoulder;
 			chargeBar.maxCharge = boulderChargeAmount;
 			potentialBoulder = null;
 
-			PlayPickupSound ();
+			PlayPickupSound();
 
-			BoulderObject obj = heldBoulder.GetComponent<BoulderObject> ();
-			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D> ();
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject>();
+			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D>();
 			visualsBody.isKinematic = true;
-		} else if (heldBoulder != null) {
-			ThrowBoulder (1.0f);
 		}
-
-	}
-	
-	public void StoppedChargingAction (float percent)
-	{
-
-		if (heldBoulder != null) {
-			ThrowBoulder (percent);
+		else if (heldBoulder != null)
+		{
+			ThrowBoulder(1.0f);
 		}
 
 	}
 
-	public void ToggleInstantPickup ()
+	public void StoppedChargingAction(float percent)
 	{
-		
+
+		if (heldBoulder != null)
+		{
+			ThrowBoulder(percent);
+		}
+
+	}
+
+	public void ToggleInstantPickup()
+	{
+
 		boulderPickupAmount = 0.0f;
 
-		if (heldBoulder == null) {
+		if (heldBoulder == null)
+		{
 			chargeBar.maxCharge = boulderPickupAmount;
 		}
 
