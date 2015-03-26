@@ -36,7 +36,7 @@ public class HealthBarScript : MonoBehaviour
 				charge += Time.deltaTime;
 
 				if (charge >= maxCharge) {
-					lastCharge = 1.0f;
+					lastCharge = maxCharge;
 					charge = 0.0f;
 					objectToNotify.SendMessage("FinishedChargingAction");
 					isCharging = false;

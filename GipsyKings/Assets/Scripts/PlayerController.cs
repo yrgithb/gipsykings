@@ -607,10 +607,36 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	public void ToggleInstantPickup()
+	public void PickupModeToggle(bool status)
 	{
 
-		boulderPickupAmount = 0.0f;
+		if (status == true)
+		{
+			SetInstantPickup();
+		}
+		else
+		{
+			SetNormalPickup();
+		}
+
+	}
+
+	void SetInstantPickup()
+	{
+
+		boulderPickupAmount = 0.001f;
+
+		if (heldBoulder == null)
+		{
+			chargeBar.maxCharge = boulderPickupAmount;
+		}
+
+	}
+
+	void SetNormalPickup()
+	{
+
+		boulderPickupAmount = boulderChargeAmount;
 
 		if (heldBoulder == null)
 		{
