@@ -340,7 +340,18 @@ public class PlayerController : MonoBehaviour
 				return;
 			}
 
-			GetComponent<Rigidbody2D>().velocity = new Vector2(directionMultiplier * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
+			float speed = maxSpeed;
+			if (heldBoulder != null)
+			{
+				BoulderScript heldBoulderScript = heldBoulder.GetComponentInParent<BoulderScript>();
+				float percentBonus = heldBoulderScript.SpeedBonus() / 100.0f;
+				if (percentBonus > 0.0f)
+				{
+					speed += speed * percentBonus;
+				}
+			}
+
+			GetComponent<Rigidbody2D>().velocity = new Vector2(directionMultiplier * speed, GetComponent<Rigidbody2D>().velocity.y);
 
 			// dashing
 			if (dashing == true)
