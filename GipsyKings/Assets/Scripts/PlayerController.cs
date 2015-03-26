@@ -140,7 +140,18 @@ public class PlayerController : MonoBehaviour
 				GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, 0.0f);
 			}
 
-			GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jumpForce));
+			float jump = jumpForce;
+			if (heldBoulder != null)
+			{
+				BoulderScript heldBoulderScript = heldBoulder.GetComponentInParent<BoulderScript>();
+				float percentBonus = heldBoulderScript.JumpBonus() / 100.0f;
+				if (percentBonus > 0.0f)
+				{
+					jump += jump * percentBonus;
+				}
+			}
+
+			GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, jump));
 			PlayJumpSound();
 		}
 
@@ -550,23 +561,6 @@ public class PlayerController : MonoBehaviour
 		}
 
 		chargeBar.maxCharge = boulderPickupAmount;
-
-		ResetBoulderBonuses();
-
-	}
-
-	void ResetBoulderBonuses()
-	{
-
-		// remove any passive bonuses gathered from the boulders
-
-		// restore speed
-
-		// restore damage taken
-
-		// restore jump force
-
-		// restore dash cooldown
 
 	}
 
