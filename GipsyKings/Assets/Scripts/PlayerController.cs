@@ -171,20 +171,27 @@ public class PlayerController : MonoBehaviour
 			GameObject visuals = body.visuals;
 			BoulderScript boulderScript = boulderObject.GetComponentInParent<BoulderScript>();
 
-			if (boulderScript == null)
-			{
-				print("WHOOPS");
-			}
-
 			Rigidbody2D rigidBody = visuals.GetComponent<Rigidbody2D>();
 			float boulderMagnitude = rigidBody.velocity.sqrMagnitude;
 			if (boulderMagnitude > 9.0f)
 			{
 				detectedCollisionBoulder = boulderObject;
-				print("Boulder velocity squared magnitude " + boulderMagnitude);
+				//print("Boulder velocity squared magnitude " + boulderMagnitude);
+
+				// check held boulder shield
+				float healthReduction = boulderScript.baseDamage + boulderScript.DamageBonus();
+				if (heldBoulder != null)
+				{
+					BoulderScript heldBoulderScript = heldBoulder.GetComponentInParent<BoulderScript>();
+					float percentReduction = heldBoulderScript.ShieldBonus() / 100.0f;
+					if (percentReduction > 0.0f)
+					{
+						healthReduction -= healthReduction * percentReduction;
+					}
+				}
 
 				// take damage
-				health -= boulderScript.damage;
+				health -= healthReduction;
 				healthBar.charge = health;
 
 				PlayHitSound();

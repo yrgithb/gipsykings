@@ -15,20 +15,27 @@ public class BoulderScript : MonoBehaviour
 
 	public BoulderType type;
 	public SpriteRenderer iconSpriteRenderer;
-	public float damage = 5.1f;
+	public float baseDamage = 5.1f;
+
+	// inspector values for boulder type bonuses
+	public float speedBoulderBoostPercent = 30.0f;
+	public float sniperBoulderDamage = 1000.0f;
+	public float shieldBoulderDamageReductionPercent = 30.0f;
+	public float jumpBoulderBoostPercent = 30.0f;
+	public float dashBoulderCooldownReductionPercent = 30.0f;
+
+	// internal bonus values for boulder
+	private float speedBonus = 0.0f;
+	private float damageBonus = 0.0f;
+	private float shieldBonus = 0.0f;
+	private float jumpBonus = 0.0f;
+	private float dashBonus = 0.0f;
 
 	// Use this for initialization
 	void Start()
 	{
 
-		// set image according to type
-		SetImage();
-
-		// force damage for sniper boulders
-		if (type == BoulderType.Sniper)
-		{
-			damage = 1000.0f; // one shot
-		}
+		ConfigureBoulder();
 
 	}
 
@@ -38,33 +45,71 @@ public class BoulderScript : MonoBehaviour
 
 	}
 
-	void SetImage()
+	void ConfigureBoulder()
 	{
 
-		string postfix = "sprite_boulder_";
+		string spriteName = "sprite_boulder_";
 		if (type == BoulderType.Speed)
 		{
-			postfix += "speed";
+			spriteName += "speed";
+			speedBonus = speedBoulderBoostPercent;
 		}
 		else if (type == BoulderType.Sniper)
 		{
-			postfix += "oneshot";
+			spriteName += "oneshot";
+			damageBonus = 1000.0f; // some large value to ensure one-shotting
 		}
 		else if (type == BoulderType.Shield)
 		{
-			postfix += "shield";
+			spriteName += "shield";
+			shieldBonus = shieldBoulderDamageReductionPercent;
 		}
 		else if (type == BoulderType.Jump)
 		{
-			postfix += "jump";
+			spriteName += "jump";
+			jumpBonus = jumpBoulderBoostPercent;
 		}
 		else if (type == BoulderType.Dash)
 		{
-			postfix += "dash";
+			spriteName += "dash";
+			dashBonus = dashBoulderCooldownReductionPercent;
 		}
-		string fullPath = "Sprites/Boulders/" + postfix;
+		string fullPath = "Sprites/Boulders/" + spriteName;
 
 		iconSpriteRenderer.sprite = Resources.Load<Sprite>(fullPath);
-		
+
 	}
+
+	public float DamageBonus()
+	{
+
+		return damageBonus;
+
+	}
+
+	public float SpeedBonus()
+	{
+
+		return speedBonus;
+
+	}
+	public float ShieldBonus()
+	{
+
+		return shieldBonus;
+
+	}
+	public float JumpBonus()
+	{
+
+		return jumpBonus;
+
+	}
+	public float DashBonus()
+	{
+
+		return dashBonus;
+
+	}
+
 }
