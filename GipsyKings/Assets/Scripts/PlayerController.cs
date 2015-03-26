@@ -165,7 +165,18 @@ public class PlayerController : MonoBehaviour
 			chargeBar.Charge();
 		}
 
-		if (Input.GetButtonDown(playerButton("Dash")) == true && dashing == false && timeSinceLastDash >= dashInterval)
+		float currentDashInterval = dashInterval;
+		if (heldBoulder != null)
+		{
+			BoulderScript heldBoulderScript = heldBoulder.GetComponentInParent<BoulderScript>();
+			float percentBonus = heldBoulderScript.DashBonus() / 100.0f;
+			if (percentBonus > 0.0f)
+			{
+				currentDashInterval -= currentDashInterval * percentBonus;
+			}
+		}
+
+		if (Input.GetButtonDown(playerButton("Dash")) == true && dashing == false && timeSinceLastDash >= currentDashInterval)
 		{
 			dashing = true;
 			PlayDashSound();
