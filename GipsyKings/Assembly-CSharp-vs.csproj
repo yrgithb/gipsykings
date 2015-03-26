@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\BackgroundParallaxScript.cs" />
      <Compile Include="Assets\Scripts\BoulderObject.cs" />
+     <Compile Include="Assets\Scripts\BoulderScript.cs" />
      <Compile Include="Assets\Scripts\CameraFollowScript.cs" />
      <Compile Include="Assets\Scripts\EndGameScript.cs" />
      <Compile Include="Assets\Scripts\GeneralControlsController.cs" />
