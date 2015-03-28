@@ -87,6 +87,8 @@ public class PlayerController : MonoBehaviour
 		chargeBar.maxCharge = boulderPickupAmount;
 		chargeBar.objectToNotify = this.gameObject;
 
+		LoadInstantStatus();
+
 		// hide end game text view
 		endGameScreen.gameObject.SetActive(false);
 
@@ -631,6 +633,8 @@ public class PlayerController : MonoBehaviour
 			chargeBar.maxCharge = boulderPickupAmount;
 		}
 
+		SaveInstantStatus(true);
+
 	}
 
 	void SetNormalPickup()
@@ -642,6 +646,37 @@ public class PlayerController : MonoBehaviour
 		{
 			chargeBar.maxCharge = boulderPickupAmount;
 		}
+
+
+		SaveInstantStatus(false);
+
+	}
+
+	void LoadInstantStatus()
+	{
+
+		int status = 0;
+		if (PlayerPrefs.HasKey("instantPickupOn") == true)
+		{
+			status = PlayerPrefs.GetInt("instantPickupOn");
+		}
+
+		if (status == 1)
+		{
+			SetInstantPickup();
+		}
+		else
+		{
+			SetNormalPickup();
+		}
+
+	}
+
+	void SaveInstantStatus(bool status)
+	{
+		
+		PlayerPrefs.SetInt("instantPickupOn", (status == true) ? 1 : 0);
+		PlayerPrefs.Save();
 
 	}
 
