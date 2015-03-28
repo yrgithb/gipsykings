@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\BoulderScript.cs" />
      <Compile Include="Assets\Scripts\CameraFollowScript.cs" />
      <Compile Include="Assets\Scripts\EndGameScript.cs" />
+     <Compile Include="Assets\Scripts\GameSettingsScript.cs" />
      <Compile Include="Assets\Scripts\GeneralControlsController.cs" />
      <Compile Include="Assets\Scripts\HealthBarScript.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
