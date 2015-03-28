@@ -77,6 +77,14 @@ public class PlayerController : MonoBehaviour
 
 		audioSource = GetComponent<AudioSource>();
 
+		if (PlayerPrefs.HasKey("soundOn") == true)
+		{
+			if (PlayerPrefs.GetInt("soundOn") == 0)
+			{
+				audioSource.volume = 0.0f;
+			}
+		}
+
 		potentialBoulder = null;
 		heldBoulder = null;
 		detectedCollisionBoulder = null;
@@ -674,7 +682,7 @@ public class PlayerController : MonoBehaviour
 
 	void SaveInstantStatus(bool status)
 	{
-		
+
 		PlayerPrefs.SetInt("instantPickupOn", (status == true) ? 1 : 0);
 		PlayerPrefs.Save();
 
