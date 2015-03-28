@@ -38,7 +38,10 @@ public class GeneralControlsController : MonoBehaviour
 	void Update ()
 	{
 		if (Input.GetKey ("escape")) {
-			Application.Quit ();
+			Application.LoadLevel("MainMenu");
+			
+			// remove singleton
+			Destroy(_instance.gameObject);
 		}
 	}
 }

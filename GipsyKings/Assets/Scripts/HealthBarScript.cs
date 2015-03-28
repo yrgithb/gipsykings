@@ -17,66 +17,77 @@ public class HealthBarScript : MonoBehaviour
 	public GameObject objectToNotify;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
 
 	}
-	
+
 	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
 
-		if (isChargeMeter == true) {
+		if (isChargeMeter == true)
+		{
 			// hide/show charger if needed
-			CanvasGroup groupElement = GetComponent<CanvasGroup> ();
+			CanvasGroup groupElement = GetComponent<CanvasGroup>();
 
-			if (isCharging == true) {
+			if (isCharging == true)
+			{
 				groupElement.alpha = 1.0f;
 
 				charge += Time.deltaTime;
 
-				if (charge >= maxCharge) {
+				if (charge >= maxCharge)
+				{
 					lastCharge = maxCharge;
 					charge = 0.0f;
 					objectToNotify.SendMessage("FinishedChargingAction");
 					isCharging = false;
 				}
-			} else {
-				if (charge > 0.0f) {
+			}
+			else
+			{
+				if (charge > 0.0f)
+				{
 					lastCharge = charge / maxCharge;
 					objectToNotify.SendMessage("StoppedChargingAction", lastCharge);
 				}
-				charge = 0.0f;			
+				charge = 0.0f;
 				groupElement.alpha = 0.0f;
 			}
 			scrollBar.size = charge / maxCharge;
-		} else {
+		}
+		else
+		{
 			scrollBar.size = charge / maxCharge;
 		}
 
 	}
 
-	public void UpdateWithParentPosition (Vector3 position)
+	public void UpdateWithParentPosition(Vector3 position)
 	{
 
 		// anochor to parent game object
-		Vector2 framePosition = Camera.main.WorldToScreenPoint (position);
-		framePosition.x += offset.x;
-		framePosition.y += offset.y;
-		
-		RectTransform rectTransform = (RectTransform)this.transform;
-		rectTransform.anchoredPosition = framePosition;
+		if (Camera.main != null)
+		{
+			Vector2 framePosition = Camera.main.WorldToScreenPoint(position);
+			framePosition.x += offset.x;
+			framePosition.y += offset.y;
+
+			RectTransform rectTransform = (RectTransform)this.transform;
+			rectTransform.anchoredPosition = framePosition;
+		}
 
 	}
 
-	public void Charge ()
+	public void Charge()
 	{
 
 		isCharging = true;
 
 	}
 
-	public void StopCharging ()
+	public void StopCharging()
 	{
 
 		isCharging = false;
