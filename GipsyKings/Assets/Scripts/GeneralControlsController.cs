@@ -5,6 +5,8 @@ public class GeneralControlsController : MonoBehaviour
 {
 
 	private static GeneralControlsController _instance;
+	private AudioClip[] musicClips;
+	private AudioSource musicSource;
 
 	public static GeneralControlsController instance
 	{
@@ -25,7 +27,7 @@ public class GeneralControlsController : MonoBehaviour
 	void Awake()
 	{
 
-		AudioSource musicSource = this.GetComponent<AudioSource>();
+		musicSource = this.GetComponent<AudioSource>();
 		if (musicSource != null)
 		{
 			int status = 0;
@@ -37,6 +39,10 @@ public class GeneralControlsController : MonoBehaviour
 			if (status == 0)
 			{
 				musicSource.volume = 0.0f;
+			}
+			else
+			{
+				PlayMusic();
 			}
 		}
 
@@ -61,6 +67,7 @@ public class GeneralControlsController : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+
 		if (Input.GetKey("escape"))
 		{
 			Application.LoadLevel("MainMenu");
@@ -68,5 +75,32 @@ public class GeneralControlsController : MonoBehaviour
 			// remove singleton
 			Destroy(_instance.gameObject);
 		}
+
+		PlayMusic();
+	
 	}
+
+	void PlayMusic()
+	{
+
+		if (musicSource != null)
+		{
+			if (musicSource.isPlaying == false && musicSource.enabled == true)
+			{
+				if (musicClips == null)
+				{
+					// load music clips
+					musicClips = Resources.LoadAll<AudioClip>("Music/JJR2");
+				}
+
+				// play random track		
+				int max = musicClips.Length;
+				int randomIndex = Random.Range(0, max);
+				musicSource.clip = musicClips[randomIndex];
+				musicSource.Play();
+			}
+		}
+
+	}
+
 }
