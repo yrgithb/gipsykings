@@ -1,0 +1,13 @@
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\Assembly-CSharp.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\Assembly-CSharp.pdb
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\UnityEditor.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\UnityEngine.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\UnityEngine.UI.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\Mono.Cecil.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\Unity.SerializationLogic.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\Unity.DataContract.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+D:\projects\gipsykings\GipsyKings\Temp\bin\Debug\Unity.CecilTools.dll
+D:\projects\gipsykings\GipsyKings\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+D:\projects\gipsykings\GipsyKings\obj\Debug\Assembly-CSharp.dll
+D:\projects\gipsykings\GipsyKings\obj\Debug\Assembly-CSharp.pdb

@@ -250,10 +250,26 @@ public class PlayerController : MonoBehaviour
 	{
 
 		string winningPlayer = "Player 1";
+		int postfix = 1;
 		if (player == OwningPlayer.Player1)
 		{
 			winningPlayer = "Player 2";
+			postfix = 2;
 		}
+
+		// save to settings
+		string keyName = "scorePlayer";
+		keyName += postfix;
+		int currentScore = 0;
+		
+		if (PlayerPrefs.HasKey(keyName) == true)
+		{
+			currentScore = PlayerPrefs.GetInt(keyName);
+		}
+		currentScore += 1;
+		PlayerPrefs.SetInt(keyName, currentScore);
+		PlayerPrefs.Save();
+		
 		string currentText = winningPlayer + " is victorious.\nPress Enter to restart\nEscape to quit";
 
 		endGameScreen.gameObject.SetActive(true);

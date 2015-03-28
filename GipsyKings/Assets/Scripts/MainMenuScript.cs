@@ -13,6 +13,11 @@ public class MainMenuScript : MonoBehaviour
 		DidChangeMusicToggle(true);
 		DidChangeSoundToggle(true);
 
+		// remove score keys
+		PlayerPrefs.SetInt("scorePlayer1", 0);
+		PlayerPrefs.SetInt("scorePlayer2", 0);
+		PlayerPrefs.Save();
+
 	}
 
 	// Update is called once per frame
