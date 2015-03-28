@@ -7,9 +7,11 @@ public class MainMenuScript : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-	
-		// initial state of instant pickup: off
+
+		// initial states
 		DidChangeToggle(false);
+		DidChangeMusicToggle(true);
+		DidChangeSoundToggle(true);
 
 	}
 
@@ -30,7 +32,7 @@ public class MainMenuScript : MonoBehaviour
 		else if (obj.name == "L2")
 		{
 
-		} 
+		}
 		else if (obj.name == "L3")
 		{
 
@@ -40,15 +42,36 @@ public class MainMenuScript : MonoBehaviour
 			Application.Quit();
 		}
 
-		Application.LoadLevel("GameScene");
+		Application.LoadLevel("Level1");
+
+	}
+
+	void SetBoolStatusForKey(string key, bool status)
+	{
+
+		PlayerPrefs.SetInt(key, (status == true) ? 1 : 0);
+		PlayerPrefs.Save();
 
 	}
 
 	public void DidChangeToggle(bool status)
 	{
 
-		PlayerPrefs.SetInt("instantPickupOn", (status == true) ? 1 : 0);
-		PlayerPrefs.Save();
+		SetBoolStatusForKey("instantPickupOn", status);
+
+	}
+
+	public void DidChangeMusicToggle(bool status)
+	{
+
+		SetBoolStatusForKey("musicOn", status);
+
+	}
+
+	public void DidChangeSoundToggle(bool status)
+	{
+
+		SetBoolStatusForKey("soundOn", status);
 
 	}
 

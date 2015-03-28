@@ -21,6 +21,7 @@ public class GeneralControlsController : MonoBehaviour
 	
 	void Awake ()
 	{
+
 		if (_instance == null) {
 			//If I am the first instance, make me the Singleton
 			_instance = this;
@@ -32,6 +33,26 @@ public class GeneralControlsController : MonoBehaviour
 				Destroy (this.gameObject);
 			}
 		}
+
+		AudioSource musicPlayer = _instance.GetComponent<AudioSource>();
+		if (musicPlayer != null)
+		{
+			int status = 0;
+			if (PlayerPrefs.HasKey("musicOn") == true)
+			{
+				status = PlayerPrefs.GetInt("musicOn");
+			}
+			
+			if (status == 1)
+			{
+				musicPlayer.Play();
+			}
+			else
+			{
+				musicPlayer.Stop();
+			}
+		}
+
 	}
 
 	// Update is called once per frame
