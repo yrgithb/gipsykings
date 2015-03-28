@@ -24,26 +24,14 @@ public class MainMenuScript : MonoBehaviour
 	public void DidPressLevelButton(GameObject obj)
 	{
 
-		print(obj.name);
-		if (obj.name == "L1")
-		{
-
-		}
-		else if (obj.name == "L2")
-		{
-
-		}
-		else if (obj.name == "L3")
-		{
-
-		}
-		else if (obj.name == "Exit")
+		if (obj.name == "Exit")
 		{
 			Application.Quit();
 		}
-
-		Application.LoadLevel("Level1");
-
+		else
+		{
+			Application.LoadLevel(obj.name);
+		}
 	}
 
 	void SetBoolStatusForKey(string key, bool status)

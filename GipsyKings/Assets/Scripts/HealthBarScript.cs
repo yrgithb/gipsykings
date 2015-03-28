@@ -44,6 +44,8 @@ public class HealthBarScript : MonoBehaviour
 					objectToNotify.SendMessage("FinishedChargingAction");
 					isCharging = false;
 				}
+
+				objectToNotify.SendMessage("UpdateChargeProgress", charge / maxCharge);
 			}
 			else
 			{

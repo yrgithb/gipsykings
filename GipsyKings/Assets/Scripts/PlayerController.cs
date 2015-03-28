@@ -563,7 +563,9 @@ public class PlayerController : MonoBehaviour
 			BoulderObject obj = heldBoulder.GetComponent<BoulderObject>();
 			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D>();
 			visualsBody.isKinematic = false;
-
+			visualsBody.fixedAngle = true;
+			visualsBody.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+			
 			int directionMultiplier = 0;
 			if (facingRight == false)
 			{
@@ -599,6 +601,7 @@ public class PlayerController : MonoBehaviour
 			BoulderObject obj = heldBoulder.GetComponent<BoulderObject>();
 			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D>();
 			visualsBody.isKinematic = true;
+			visualsBody.fixedAngle = false;
 		}
 		else if (heldBoulder != null)
 		{
@@ -613,6 +616,28 @@ public class PlayerController : MonoBehaviour
 		if (heldBoulder != null)
 		{
 			ThrowBoulder(percent);
+		}
+
+	}
+
+	public void UpdateChargeProgress(float percent)
+	{
+
+		if (heldBoulder != null && percent > 0.0f)
+		{
+			
+			int directionMultiplier = 1;
+			if (facingRight == false)
+			{
+				directionMultiplier = -1;
+			}
+			
+			// rotate boulder
+			float angle = directionMultiplier * percent * 45.0f;
+
+			BoulderObject obj = heldBoulder.GetComponent<BoulderObject>();
+			Rigidbody2D visualsBody = obj.visuals.GetComponent<Rigidbody2D>();
+			visualsBody.transform.rotation = Quaternion.Euler(0.0f, 0.0f, angle);
 		}
 
 	}
