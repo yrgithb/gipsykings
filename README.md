@@ -3,6 +3,8 @@ Boulderados/Gibrock
 
 Note: As of April 2015, @sasoh is suspening his involvement to continue working on [a new project for the new month](https://github.com/sasoh/Lander). [Windows (x86) build here](http://sourceforge.net/projects/gibrock/files/builds/024_LevelSelectionScores.rar/download). To be continued.
 
+![](http://i.imgur.com/5wYdJOI.jpg)
+
 Two-player versus game for PC. Core gameplay: one boulder is available, which takes 0.7 seconds to pick up. After it is picked up, the player can throw it, killing the opposing player upon impact.
 Once the boulder has been picked up, the player not wielding the boulder  can pick up a pebble. It is is thrown at the player wielding the boulder fast, interrupting any throw charging he is doing and causing him to drop the boulder.
 Physics big part of gameplay, defining the feeling of picking up and throwing the boulder, also impact.
