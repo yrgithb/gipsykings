@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public float boulderChargeAmount;
-	public float boulderPickupAmount;
+	private float boulderPickupAmount = 0.001f;
 	public float boulderThrowForce = 2000.0f;
 	public GameObject detectedCollisionBoulder;
 
@@ -94,8 +94,6 @@ public class PlayerController : MonoBehaviour
 		healthBar.objectToNotify = this.gameObject;
 		chargeBar.maxCharge = boulderPickupAmount;
 		chargeBar.objectToNotify = this.gameObject;
-
-		LoadInstantStatus();
 
 		// hide end game text view
 		endGameScreen.gameObject.SetActive(false);
@@ -657,76 +655,4 @@ public class PlayerController : MonoBehaviour
 		}
 
 	}
-
-	public void PickupModeToggle(bool status)
-	{
-
-		if (status == true)
-		{
-			SetInstantPickup();
-		}
-		else
-		{
-			SetNormalPickup();
-		}
-
-	}
-
-	void SetInstantPickup()
-	{
-
-		boulderPickupAmount = 0.001f;
-
-		if (heldBoulder == null)
-		{
-			chargeBar.maxCharge = boulderPickupAmount;
-		}
-
-		SaveInstantStatus(true);
-
-	}
-
-	void SetNormalPickup()
-	{
-
-		boulderPickupAmount = boulderChargeAmount;
-
-		if (heldBoulder == null)
-		{
-			chargeBar.maxCharge = boulderPickupAmount;
-		}
-
-
-		SaveInstantStatus(false);
-
-	}
-
-	void LoadInstantStatus()
-	{
-
-		int status = 0;
-		if (PlayerPrefs.HasKey("instantPickupOn") == true)
-		{
-			status = PlayerPrefs.GetInt("instantPickupOn");
-		}
-
-		if (status == 1)
-		{
-			SetInstantPickup();
-		}
-		else
-		{
-			SetNormalPickup();
-		}
-
-	}
-
-	void SaveInstantStatus(bool status)
-	{
-
-		PlayerPrefs.SetInt("instantPickupOn", (status == true) ? 1 : 0);
-		PlayerPrefs.Save();
-
-	}
-
 }
