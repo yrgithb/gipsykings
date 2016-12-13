@@ -9,7 +9,6 @@ public class MainMenuScript : MonoBehaviour
 	{
 
 		// initial states
-		DidChangeToggle(false);
 		DidChangeMusicToggle(true);
 		DidChangeSoundToggle(true);
 
@@ -44,13 +43,6 @@ public class MainMenuScript : MonoBehaviour
 
 		PlayerPrefs.SetInt(key, (status == true) ? 1 : 0);
 		PlayerPrefs.Save();
-
-	}
-
-	public void DidChangeToggle(bool status)
-	{
-
-		SetBoolStatusForKey("instantPickupOn", status);
 
 	}
 
