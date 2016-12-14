@@ -43,15 +43,15 @@ Alpha (4 weeks from project start)
 
 Beta (end of March 2015)
 
-- [ ] different types of bouders which influence gameplay while wielding the boulder:
+- [x] different types of bouders which influence gameplay while wielding the boulder:
 - speed boulder (30% increased movement speed)
 - big boulder (one-shots enemy player)
 - shield boulder (less damage taken)
 - jumpy boulder (30% higher jump)
 - dash boulder (50% less dash cooldown)
-- [ ] basic level design (multi level arena with platforms etc)
-- [ ] three levels with different size
-- [ ] improved UI which offers level choice and shows the winning player
+- [x] basic level design (multi level arena with platforms etc)
+- [x] three levels with different size
+- [x] improved UI which offers level choice and shows the winning player
 
 Final
 
