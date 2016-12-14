@@ -65,3 +65,22 @@ Review
 - define overall future
 - discuss game quality
 - discuss sales feasibility
+
+Gibrock plus
+===
+
+Backlog
+
+- [ ] new input system
+- [ ] jumping on stones
+- [x] fix platform collision bug
+- [x] hide mouse while ingame
+- [ ] replays
+- [ ] shield rock should save from instagib when player in full health
+- [ ] single player level(s)
+- [ ] shooting projection/assistance
+- [ ] drop rock if it's hit by a flying rock
+- [ ] camera smoothing
+- [ ] ragdoll deaths
+- [ ] minimum throw should not hurt player if no movement occurs
+- [ ] end round screen polish
